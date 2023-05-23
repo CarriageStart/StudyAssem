@@ -1,0 +1,118 @@
+
+1. If statement
+    - Use cmp and conditional jmp
+
+ex)
+.gloabl _start
+.section .data
+numbers:
+    .quad 5, 0
+.section .text
+_start:
+    movq $8, %rbx
+    movq numbers(,%rbx, 1), %rax
+# Condition
+    cmp numbers(, %rbx, 0), %rax 
+# Jump if not satisfied
+    jbe ELSE_STATEMENT
+# True Statement
+    movq 1, %rdi
+    movq 60, %rax
+    syscall
+# Jump if not satisfied
+ELSE_STATEMENT:
+    movq 0, %rdi
+    movq 60, %rax
+    syscall
+    
+
+2. Loop within condition
+    - Composed of "Early Exit", "Loop Statement", "If statement".
+ex)
+.global _start
+.section .data
+len:
+    .quad 7
+numbers:
+    .quad 5, 20, 33, 80, 52, 10, 1
+
+.section .text
+_start:
+    movq len, %rcx  # %rcx for loop instruction
+    movq $mynumbers, %rbx
+    movq $0, %rdi
+
+    # Ealy Exit 
+    cmp $0, %rcx
+    je ENDLOOP
+
+    ### Main loop ###
+LOOP:
+    # Loop Statement
+    movq (%rbx), %rax
+
+    # If Statement
+    cmp %rdi, %rax
+    jbe CONTINUE
+    movq %rax, %rdi
+
+CONTINUE:
+    addq $8, %rbx   # quad is 8 bytes.
+    loopq LOOP
+
+ENDLOOP
+    movq $60, %rax
+    syscall
+    
+
+3. Function (Procedures or routines)
+- A function is defined with name(label for the entry point), 
+ input parameteres, return values, and side effect(non-returning result).
+
+  * Function calling convention(Application binary interface)
+      => Linux uses the System V ABI convention.(Operator-specific compiler)
+
+        Stack data  ( Each line is quad word )
+                                        (Latter part of memory)
+   Previous   ^ |                   |
+  Stack Frame | |                   |
+              - |                   |
+              - | Label Address     |   => Location to jump in return.
+   Current    | | Previous %rbp     |   <= %rbp points to this location of stack.
+  Stack Frame | |   Local var 1     |   (%rbp - 8)  => Local(non-global) variables
+              | |   Local var 2     |   (%rbp - 16)     of called function.
+              v |   Local var 3     |   (%rbp - 24) <= %rsp points to this location.
+                |                   |   
+                                        (start part of memory)
+                                        (=> Stack is pushed upward.)
+    
+      => When function is called,
+        a. Next instruction address of current context is pushed.
+        b. Current %rbp is pushed in stack.
+        c. %rsp is saved to %rbp.(stack pointor)
+        d. Allocate the local variables of function in stack.
+    
+      => When function is finished,
+        a. %rbp is saved to %rsp.
+        b. Pop to %rbp (Restore the previous %rbp)
+        c. Pop the jump location and jump.
+
+    - Calling function, itself, uses %rbp, %rbx, and %r12 ~ %r15.
+        => Used to save current location, jump location, and so on.
+        => The data in these register should be saved in memory.
+        => %rbp is the base address of the function stack frame.
+            (%rbp is like ".section .data" location) 
+                => In object file, any data label is changed in the relative 
+                    location from ".section .data" location, which is %rbp.
+        => %rsp is the stack pointor, which is commonly used in program.
+    - Input parameters are saved in sequence.
+        a. Registers(%rdi, %rsi, %rdx, %rcx, %r8, %r9)
+        b. Stacks(the last parameter pushed first)
+    - Value to return needs to be in %rax and %rdx.
+
+
+    
+
+
+
+

@@ -1,0 +1,166 @@
+
+* Data Acess
+- Genenral syntax of the memory access is
+
+    VALUE(BASEREG=0, INDREG=0, MULTIPLIER=1)
+
+    => Access BASEREG + VALUE + INDREG * MULTIPLIER
+    VALUE(value)        : Offset value from the BASEREG position
+    BASEREG(%rbp)       : Register with the memory address
+    INDREG(%rdx)        : Register with the size of data
+    MULTIPLIER(value)   : Num of repetition of data
+
+    => BASEREG=0 means ".section .data" first location
+
+
+ => Visualization of the systax
+   %BASEREG   --------------------------> |0x00000000|
+                                   |      |0x00000008|
+                                   |      |0x00000016|
+                                   |      |0x00000024|
+                                   |      |0x00000030|
+                   VALUE (Offset)  - -    |0x00000036|
+                                   | |    |0x00000042|
+                                   | |    |0x00000048|
+                                   | |    |0x00000054|
+                                   | -    |0x00000060|
+                                   | |    |0x00000066|
+  MULTIPLIER x %INDREG (Data Unit) | |    |0x00000072|
+                                   | |    |0x00000078|
+                                   | -    |0x00000084|
+                                   . .          .
+                                   . .          .
+                                   . .          .
+                                   | |    |0x00000090|
+                                   | |    |0x00000096|
+                                   | |    |0x00000102|
+                                   | -    |0x00000108|
+                                   | |    |0x00000114|
+                                   | |    |0x00000120|
+                                   | |    |0x00000126|
+         What we are pointing =>   - -    |0x00000132|
+
+
+=> Convention is small case.
+
+    A. Default Value
+
+- The very default is stored in the compiled machine language.
+ex)
+.global _start
+
+.section .text
+_start:
+    movq $3, %rdi  # "3" is in the machine code as a binary format.
+    movq $60, %rax # "60" is in the machine code
+    syscall
+
+
+
+    B. Memory Access
+
+- Memory is outside of CPU. Therefore, any access utilize pointor(Memory Address - search command of memory).
+- By default, assembler finds a momery location from the ".section .data" location.
+
+1. Direct memory mode
+    - Access with the memory address itself.
+
+ex) Labeled memory address
+.global _start
+
+.section .data
+first_loc:
+    .quad 4     # "first_loc" is label for this memory address
+                # => In more detail, it is a byte-offset from 
+                #   ".section. .data".
+
+.section .text
+_start:
+    movq first_value, %rdi
+        # first_value is direct memory access mode.
+    movq $60, %rax
+    syscall
+
+    * This is the same as Value(0, 0, 1). 
+        => "Value(omit, omit, omit)"
+        => offset about "Value" from ".section .data"
+        
+
+2. Indirect memory mode(Register)
+    - Access with the memory address stored in register
+ex) 
+.global _start
+
+.section .data
+first_loc:
+    .quad 4
+
+.section .text
+_start:
+    # In x64 processor, memory address is quadra-word(8 byte).
+    movq $mynumbers, %rbp   # or movq 0, %rbp
+    movq (%rbp), %rdi
+    movq 60, %rax
+    syscall
+    
+    * This is the same as 0(%rbp, 0, 1)
+        => "omit(%rbp, omit, omit)"
+        => Access the momery address stored in %rbp.
+
+3. Indexed Mode
+    - Index like an array.
+    - "VALUE(omit, IDXREG, MULTIPLIER)"
+
+4. Base pointor mode(displacement mode)
+    - Pointor arithmetics
+    - "VALUE(BASEREG)"
+
+5. Base pointor indexed mode
+    - "omit(BASEREG, IDXREG, MULTIPLIER)"
+
+6. Program Counter(PC)-Relative addressing mode
+
+7. lea instruction(Load Effective Address)
+    ex) leaq src, des
+    - Calculate the value of source memory address, and store it in
+     the destination.
+
+
+
+* Structured Data
+
+- Basically, well-definced segment(array) of data, where 
+ the structure is preliminary defined(outside of program).
+- It is not recommended to have label for structure constants.
+- If the structure data is used only inside a file, just ".equ".
+- If the structure data is used outside of a file, global it.
+
+- Convention is large character.
+
+- Basic approach is 
+
+ex)
+.global _start
+.global PERSON_RECORD_SIZE, WEIGHT_OFFSET, HAIR_OFFSET, HEIGHT_OFFSET, AGE_OFFSET
+
+.section .data
+
+# Structure for one record
+.equ PERSON_RECORD_SIZE, 8 * 4
+.equ WEIGHT_OFFSET, 0
+.equ HEIGHT_OFFSET, WEIGHT_OFFSET + 8
+.equ HAIR_OFFSET, HEIGHT_OFFSET + 8
+.equ AGE_OFFSET, HAIR_OFFSET + 8
+
+# Structure for the data structure of records
+numpeople:
+    .quad (endpeople - people) / PERSON_RECORD_SIZE
+people:
+    # Array of people
+    .quad 250, 3, 75, 24
+    .quad 250, 4, 70, 11
+    .quad 250, 5, 69, 65
+endpeople:
+
+
+

@@ -1,0 +1,76 @@
+
+1. Arithmetic instructions
+- Usually formatted with xxxy, where xxx is a instruction name and y is a unit in operation.
+- The possible units of operation are q(quadraword: 8 Byte), d(double word: 4 Bytes), w(word: 2 Byte), b(Byte))
+- All carry is stored in CF(carry flag), which is a bit flag of %eflag.
+
+addq src, des
+    : Adds the source to destination (des += src)
+subq src, des
+    : Substract the source from destination (des -= src)
+incq des
+    : Increase des by one
+desq des
+    : Decrease des by one
+mulq src
+    : Multiply %rax by src (Accumulation register)
+divq src
+    : Divide %rax by src (Accumulation register), modular is stored in %rdx.
+
+cmpq src, des
+    : Calcualte des-src w/o changing src and des, and discard result
+    : If result is equal, ZF 1.
+    : If positive, ZF 0 and "Positive Flag" (TODO)
+    : If negative, ZF 0 and "negative Flag"
+
+
+2. Flow control
+- No unit-specification is needed.
+
+jmp dest
+    : Change the instruction pointor($rip) to the destination.
+jz dest
+    : Jump if ZF is 1.
+jnz dest
+    : Jump if ZF is 0.
+jc dest
+    : Jump if CF is 1.
+jnc dest
+    : Jump if CF is 0.
+je dest
+    : Jump if the comparison is "equal"(ZF 1)
+jne dest
+    : Jump if the comparison is "not equal"(ZF 0)
+ja dest
+    : Jump if the comparison is "Above"(ZF 0 and PF)
+jae dest
+    : Jump if the comparison is "Above or eqaul"(ZF 0 or PF)
+jb dest
+    : Jump if the comparison is "Below"(ZF 0 and BF)
+jbe dest
+    : Jump if the comparison is "Below or eqaul"(ZF 0 or BF)
+
+loop
+    : Jump if %rcx != 0 (doesn't do anything if %rcx == 0)
+    => Unit of command depends on what unit you use for %cx.
+        (ex : loopq for %rcx, loopd for %ecx, loopw for %cx ...)
+
+
+3. Stack Operation
+- Unit-specification is needed.
+- In modern computing, the operating system allocates the stack memory 
+ for every program.
+- The stack pointor is saved in %rsp, which is the last address of 
+ the allocated program memory.
+- In the manipulation of the stack, %rsp is decreased or raised.
+
+push src(value, register, memory)
+    : push the value in the stack,
+     and decrease the stack pointor(value in %rsp).
+pop des(register, memory)
+    : pop the last value in the stack to the destination,
+     and incerease the stack pointor.
+
+
+
+

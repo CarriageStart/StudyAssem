@@ -1,0 +1,54 @@
+
+# Based on x86-64 ISA structure
+* Register Basic
+- Name convention : %xyy (x: unit, yy: name of register) 
+                    , or %ryx (y: number from 8 to 15, x: unit)
+                    . and others (%eflag, ...).
+
+- One register can be dealt with in sub-unit of itself.
+    %rax : quadraword (64 bits - whole register)
+    %eax : extended word (32 bits of latter half register)
+    %ax  : word (16 bits of least-significant parts)
+    %ah  : upper part of %ax (8bits : Byte)
+    %al  : lower part of %ax (8bits : Byte)
+
+- 16 General purpose registers (In that your program can freely use)
+    %ax  : Maybe "A"ccumulator
+    %bx  : Maybe "B"ase
+    %cx  : Maybe "C"ounter
+    %dx  : Maybe "D"ata
+
+    %r8 ~ %r15 : really general...
+        => Units 
+            %r8: 64 bits (quadra word)
+            %r8d: 32 bits (double word)
+            %r8w: 16 bits (word)
+            %r8b: 8 bits (byte : least-significant)
+
+    * These register cannot operate in sub-units
+    %rsi  : "Source Index"
+    %rdi  : "Destination Index"
+    %rbp  : "Base Pointor"
+    %rsp  : "Stack Pointor"
+
+    => Your Program is just marely tossing with these registers.
+    
+=> For sub-unit operation, it is much faster to operate within one register.
+ex) Addition
+_start:
+    movw $0bval1val2, %bx # val: 8bits
+    add %bh, %bl
+    movw $0, %bh          # result is answer
+
+
+- Special purpose register
+    %rip : Instruction Pointor
+    %eflag : Combined bit-flag for arithmetic operations
+            => Jumb operation doesn't change %eflag.
+        ex)
+        ZF(zeroflag) 1 : the result of the operation is 0.
+        CF(zeroflag) 1 : the result of the operation has carry.
+
+
+
+

@@ -1,0 +1,52 @@
+
+* Value format
+- Decimal
+$10
+- Binary
+$0b101
+- Octal
+$010
+- Hexadecimal
+$0x000A
+- Text (ASC2)
+mytext:
+    .ascii "Hello, world!\0"
+
+* Label is pointor(Label labels memory address).
+    => To use the value stored in that address, use LABEL_NAME.
+    => To use as a memory address, use $LABEL_NAME.
+
+- Label is divided into Symbolic and numeric, or data access.
+
+1. Symbolic Labels
+    - Declared as non-numeric symbol with a semicolon. 
+        ex) "LABEL_NAME:"
+    - global scope as default and appear in symbolic table of 
+     object file.
+
+2. Numeric Labels
+    - Number label(0~9) with a semicolon.
+    - This is local scope.
+
+3. Pointor to data stored in Memory
+
+* Note the real memory address of hardware cannot be dealt in any program.
+    => The address in label is merely a relative position w.r.t its file location when the program is loaded.
+    => All label is a relative distance in Byte from the declared 
+     section(".section .data" or ".section .text").
+        => You often encounter an analogue of memory address as 
+         "0x00000000","0x00000004". Note that this is just a
+         relative position from the base(usually stack base).
+        => Therefore, 4(%rbx) is also a trivial representaion.
+
+* Constant (Macro Constant)
+- The constant is replaced with the declared value in the compile.
+
+ex)
+.equ WEIGHT_OFFSET, 0
+.equ HEIGHT_OFFSET, 0
+.equ HAIR_OFFSET, 0
+.equ AGE_OFFSET, 0
+
+
+
