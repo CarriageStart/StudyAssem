@@ -66,11 +66,23 @@ ENDLOOP
     
 
 3. Function (Procedures or routines)
-- A function is defined with name(label for the entry point), 
- input parameteres, return values, and side effect(non-returning result).
+ - A function is defined with name(label for the entry point), 
+  input parameteres, return values, and side effect(non-returning result).
+ - It is just a conventionally-defined jump using stack.
+    (label : entry jump location, 
+     input parameters : stacks and registers before entry jump,
+     output parameters : stacks and registers before end jump)
+
+    => The only difference is that the convention of assembly language compiler
+      offers the useful instructions for function. (Language prividen features)
+
+        * This is also the same for "syscall"
+        => The "syscall" table is present on every memory block of Operating System.
+        => It internally uses "driver" for independency from the hardwares.
+            => For hardware feature, it eventually searches device table too.
 
   * Function calling convention(Application binary interface)
-      => Linux uses the System V ABI convention.(Operator-specific compiler)
+      => "Linux" uses the System V ABI convention.(Operator-specific compiler)
 
         Stack data  ( Each line is quad word )
                                         (Latter part of memory)
@@ -85,6 +97,10 @@ ENDLOOP
                 |                   |   
                                         (start part of memory)
                                         (=> Stack is pushed upward.)
+        
+        * Note the procesor doesn't know the function or stack frame.(Language feature)
+         Since the assmebly is unkind, we need to "access memory of the local stack frame 
+         via offset from the base stack point" when we write the called function.
     
       => When function is called,
         a. Next instruction address of current context is pushed.
