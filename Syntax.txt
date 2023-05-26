@@ -86,49 +86,104 @@ ENDLOOP
 
         Stack data  ( Each line is quad word )
                                         (Latter part of memory)
-   Previous   ^ |                   |
+   Previous   ^ |                   |   (=> Stack starts from the last part of memory)
   Stack Frame | |                   |
               - |                   |
               - | Label Address     |   => Location to jump in return.
    Current    | | Previous %rbp     |   <= %rbp points to this location of stack.
-  Stack Frame | |   Local var 1     |   (%rbp - 8)  => Local(non-global) variables
-              | |   Local var 2     |   (%rbp - 16)     of called function.
-              v |   Local var 3     |   (%rbp - 24) <= %rsp points to this location.
+  Stack Frame | |   Local var 1     |   -8(%rbp)  => Local(non-global) variables
+              | |   Local var 2     |   -16(%rbp)     of called function.
+              v |   Local var 3     |   -24(%rbp) <= %rsp points to this location.
                 |                   |   
                                         (start part of memory)
-                                        (=> Stack is pushed upward.)
+                                        (=> Stack grows downward)
         
         * Note the procesor doesn't know the function or stack frame.(Language feature)
          Since the assmebly is unkind, we need to "access memory of the local stack frame 
          via offset from the base stack point" when we write the called function.
+            ( Previous %rbp needs to be saved somewhere )
     
       => When function is called,
-        a. Next instruction address of current context is pushed.
+        a. Next instruction address of the current context is pushed.
         b. Current %rbp is pushed in stack.
         c. %rsp is saved to %rbp.(stack pointor)
-        d. Allocate the local variables of function in stack.
+        d. Allocate the local variables of function in stack.(Doing function content)
+            ex) 
+            .section .data
+            NUMBYTES:
+                .quad 24
+            .section. .text
+            subq $NUMBYTES, %rsp
+            movq %rsi -8(%rbp)
+            movq %rsi -16(%rbp)
+            movq %rsi -24(%rbp)
     
       => When function is finished,
-        a. %rbp is saved to %rsp.
+        0. Save return value in %rax.(%rdx can be used too)
+        a. %rbp is saved to %rsp.   ( To return to the previous stack frame)
         b. Pop to %rbp (Restore the previous %rbp)
-        c. Pop the jump location and jump.
+        c. Pop the next instruction location and jump.
 
-    - Calling function, itself, uses %rbp, %rbx, and %r12 ~ %r15.
-        => Used to save current location, jump location, and so on.
-        => The data in these register should be saved in memory.
-        => %rbp is the base address of the function stack frame.
-            (%rbp is like ".section .data" location) 
-                => In object file, any data label is changed in the relative 
-                    location from ".section .data" location, which is %rbp.
-        => %rsp is the stack pointor, which is commonly used in program.
-    - Input parameters are saved in sequence.
-        a. Registers(%rdi, %rsi, %rdx, %rcx, %r8, %r9)
-        b. Stacks(the last parameter pushed first)
-    - Value to return needs to be in %rax and %rdx.
+    * In the manipulation of the stack, stack pointor always need to be multiple 
+     of quad word (16byte: "Stack alligned to 16 bytes"). Modern processors 
+     optimizes the function call instruction. Restoring pointors and jump need to be
+     done in one clock cylte.
 
+    => Restoring stack base and instruction pointors is memory-related, and jump is
+      not related. For this, stack is alligned to 16 bytes so that it can be fetched
+      in one row operation of memory.
 
-    
+  - Assembly provides "enter, leave, call, ret" instructions.
 
+  - In Assembly, these instructions uses %rbp, %rbx, and %r12 ~ %r15.
+    => Used to save current location, jump location, and so on.
+    => The data in these register should be saved in memory.
+    => %rbp is the base address of the function stack frame.
+      (%rbp is like ".section .data" location) 
+        => In object file, any data label is changed in the relative 
+            location from ".section .data" location, which is %rbp.
+    => %rsp is the stack pointor, which is commonly used in program.
+  - Input parameters are saved in sequence.
+    a. Registers(%rdi, %rsi, %rdx, %rcx, %r8, %r9)
+    b. Stacks(the last parameter pushed first)
+  - Value to return needs to be in %rax and %rdx.
+
+ex)
+# exponentfunc.s
+.globl exponent                        # Function name
+.type exponent, @function               
+
+.section .text
+exponent:
+    # %rdi has a base
+    # %rsi has a integer exponent
+
+    enter $16, $0
+    movq %rsi, -8(%rbp)
+    movq $1, %rax
+
+mainloop:
+    mulq %rdi
+    decq -8(%rbp)
+    jnz mainloop
+
+complete:
+    leave
+    ret
+
+# main.s
+.globl _start
+.section .text
+_start:
+    movq $3, %rdi
+    movq $2, %rsi
+    call exponent                   # Calling function
+
+    movq %rax, %rdi
+    movq $60, %rax
+    syscall
+
+# ld exponent.o main.o -o main
 
 
 

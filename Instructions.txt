@@ -56,7 +56,7 @@ loop
         (ex : loopq for %rcx, loopd for %ecx, loopw for %cx ...)
 
 
-3. Stack Operation
+3. Stack Manipulation
 - Unit-specification is needed.
 - In modern computing, the operating system allocates the stack memory 
  for every program.
@@ -64,13 +64,43 @@ loop
  the allocated program memory.
 - In the manipulation of the stack, %rsp is decreased or raised.
 
-push src(value, register, memory)
+    * Generally, the stack manipulation indicates the finish of 
+     one unit process. 
+        => The smallest unit of process can be ideally considered
+        to be composed of
+        a. Loading data from the stack(or memory) to registers.
+        b. Manipulation of registers.
+        c. Push the result.
+
+push src    (src: value, register, memory)
     : push the value in the stack,
      and decrease the stack pointor(value in %rsp).
-pop des(register, memory)
+pop des     (src: register, memory)
     : pop the last value in the stack to the destination,
      and incerease the stack pointor.
 
 
+4. Stack Frame Manipulation
+  - In Assembly, these instructions uses %rbp, %rbx, and %r12 ~ %r15.
+    => Used to save current location, jump location, and so on.
+    => The data in these register should be saved in memory.
+
+enter Value1, Value2
+    : Push a new stack frame with Value1 amount of local variable space.
+    ( Value2 is used for local varibles of nested function)
+    => "Push a new stack frame" 
+            == push %rbp, change %rsp, make local space.
+leave
+    : remove the stack frame
+    => "Remove the current stack frame"
+            == Change %rsp to %rbp, Restore the previous %rbp
+
+5. Calling Funtion
+call label
+    : Save the current instruction location and jump to the label.
+        ( Push the current instruction location and jump )
+ret
+    : Return to the pushed location.
+        ( Pop the previous instruction location and jump )
 
 
