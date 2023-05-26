@@ -1,7 +1,16 @@
 
-To compile assmbly program, use :
+* To compile assmbly program, use :
 as myexit.s -o myexit.o
 
-To format the link of the object program, use :
+* To format the link of the object program, use :
 ld myexit.o -o myexit
 ld myexit.o myexit2.o -o myexit
+
+* Use standard C library (libc.a)
+ld myexit.o -static -lc -o myexit
+
+* To use gcc compiler change _start label to main.
+gcc myexit.s -static -o myexit
+gcc myexit.s -static -l? -o myexit  (Incorporate library)
+
+
