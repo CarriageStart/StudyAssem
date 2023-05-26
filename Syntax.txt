@@ -83,17 +83,19 @@ ENDLOOP
 
   * Function calling convention(Application binary interface)
       => "Linux" uses the System V ABI convention.(Operator-specific compiler)
+      => All function of any programing launguage, that shares calling convention, 
+        can be used in common.
 
         Stack data  ( Each line is quad word )
                                         (Latter part of memory)
    Previous   ^ |                   |   (=> Stack starts from the last part of memory)
   Stack Frame | |                   |
               - |                   |
-              - | Label Address     |   => Location to jump in return.
-   Current    | | Previous %rbp     |   <= %rbp points to this location of stack.
-  Stack Frame | |   Local var 1     |   -8(%rbp)  => Local(non-global) variables
-              | |   Local var 2     |   -16(%rbp)     of called function.
-              v |   Local var 3     |   -24(%rbp) <= %rsp points to this location.
+              - | Label Address     |   => Location to jump in return.                  | (Call instruction)
+   Current    | | Previous %rbp     |   <= %rbp points to this location of stack.           | (Enter instruction)   
+  Stack Frame | |   Local var 1     |   -8(%rbp)  => Local(non-global) variables            |  |
+              | |   Local var 2     |   -16(%rbp)     of called function.                   |  | controllable size
+              v |   Local var 3     |   -24(%rbp) <= %rsp points to this location.          |  |
                 |                   |   
                                         (start part of memory)
                                         (=> Stack grows downward)
@@ -124,7 +126,8 @@ ENDLOOP
         b. Pop to %rbp (Restore the previous %rbp)
         c. Pop the next instruction location and jump.
 
-    * In the manipulation of the stack, stack pointor always need to be multiple 
+    * Stack Allignment
+    - In the manipulation of the stack, stack pointor always need to be multiple 
      of quad word (16byte: "Stack alligned to 16 bytes"). Modern processors 
      optimizes the function call instruction. Restoring pointors and jump need to be
      done in one clock cylte.
@@ -132,6 +135,7 @@ ENDLOOP
     => Restoring stack base and instruction pointors is memory-related, and jump is
       not related. For this, stack is alligned to 16 bytes so that it can be fetched
       in one row operation of memory.
+
 
   - Assembly provides "enter, leave, call, ret" instructions.
 
@@ -148,42 +152,52 @@ ENDLOOP
     b. Stacks(the last parameter pushed first)
   - Value to return needs to be in %rax and %rdx.
 
-ex)
-# exponentfunc.s
-.globl exponent                        # Function name
-.type exponent, @function               
+    ex)
+    # exponentfunc.s
+    .globl exponent                         # Function name
+    .type exponent, @function               
+    .equ LOCAL_NUM, -8                      # Local variable offset from base pointor
 
-.section .text
-exponent:
-    # %rdi has a base
-    # %rsi has a integer exponent
+    .section .text
+    exponent:
+        # %rdi has a base
+        # %rsi has a integer exponent
 
-    enter $16, $0
-    movq %rsi, -8(%rbp)
-    movq $1, %rax
+        #enter $16, $0                  
+        enter $16, $0                   # Local Offset often denoted as constant.
+        movq %rsi, -8(%rbp)             # %rbp has the previous rbp. 
+        movq $1, %rax                   # Therefore, local vairable stores from -8(%rbp)
 
-mainloop:
-    mulq %rdi
-    decq -8(%rbp)
-    jnz mainloop
+    mainloop:
+        mulq %rdi
+        decq -8(%rbp)
+        jnz mainloop
 
-complete:
-    leave
-    ret
+    complete:
+        leave
+        ret
 
-# main.s
-.globl _start
-.section .text
-_start:
-    movq $3, %rdi
-    movq $2, %rsi
-    call exponent                   # Calling function
+    # main.s
+    .globl _start
+    .section .text
+    _start:
+        movq $3, %rdi
+        movq $2, %rsi
+        call exponent                   # Calling function
 
-    movq %rax, %rdi
-    movq $60, %rax
-    syscall
+        movq %rax, %rdi
+        movq $60, %rax
+        syscall
 
-# ld exponent.o main.o -o main
+    # ld exponent.o main.o -o main
 
+  - Assmbly launguage in C
+  ex)
+    # main.c
+    extern int exponent(int, int);
+    int main() {
+        return exponent(4, 2);
+    }
+    # gcc main.c exponentfunc.s -o runexponent
 
 
