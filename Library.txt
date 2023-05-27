@@ -1,0 +1,12 @@
+
+Working with a library (libc)
+
+1. File operation
+- fopen : 
+    two parameters (str: path, str: mode) + one Output (File pointor)
+- fclose :
+    one parameters (file pointor)
+- fprintf(FILE, formatString, val1, val2, val3...)
+- fread()
+
+
