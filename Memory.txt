@@ -76,8 +76,8 @@ first_loc:
 
 .section .text
 _start:
-    movq first_value, %rdi
-        # first_value is direct memory access mode.
+    movq first_loc, %rdi
+        # first_loc is direct memory access mode.
     movq $60, %rax
     syscall
 
@@ -105,7 +105,7 @@ _start:
     
     * This is the same as 0(%rbp, 0, 1)
         => "omit(%rbp, omit, omit)"
-        => Access the momery address stored in %rbp.
+        => Access the content in the momery address stored in %rbp.
 
 3. Indexed Mode
     - Index like an array.
