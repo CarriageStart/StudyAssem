@@ -4,9 +4,9 @@
 promptformat:
     .ascii "Enter two numbers separated by spaces, then press return.\n\0"
 scanformat:
-    .ascii "%d %d\0"
+    .ascii "%ld %ld\0"
 testformat:
-    .ascii "%d %d\n\0"
+    .ascii "%ld %ld\n\0"
 resultformat:
     .ascii "The result if %d.\n\0"
 
@@ -22,9 +22,12 @@ main:
     movq $0, %rax
     call fprintf
 
-# For fscanf, you need to nullify the bits
-    movq $0, LOCAL_NUMBER(%rbp)
-    movq $0, LOCAL_EXPONENT(%rbp)
+    # Many c library is optimized for 32 bit processor.
+    # "fscanf" also operates in extended word size("%ebx"), therefore,
+    # the most-significant 32 bits are not updated in fscanf operation. 
+    # Therefore, you need to innitialize the value.
+    #movq $0, LOCAL_NUMBER(%rbp)
+    #movq $0, LOCAL_EXPONENT(%rbp)
 
     movq stdin, %rdi
     movq $scanformat, %rsi
