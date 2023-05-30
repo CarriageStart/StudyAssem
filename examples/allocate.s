@@ -4,6 +4,7 @@
 .type deallocate, @function
 
 .section .data
+# Information on heap segment.
 memory_start:
     .quad 0
 memory_end:
@@ -11,19 +12,29 @@ memory_end:
 
 .section .text
 
-# Memory Block Header structure
-.equ SIZE_HEADER. 16
-.equ HDR_UFLAG_OFFSET. 0
-.equ HDR_SIZE_OFFSET. 8
 
-.equ BRK_SYSCALL. 12
+# Memory Block structure
+#   Header : Uflag(8 bytes) + block size(8 bytes)
+#   Data   : %rdi(what is requested)
+.equ SIZE_HEADER, 16
+.equ HDR_UFLAG_OFFSET, 0
+.equ HDR_SIZE_OFFSET, 8
 
-# Register used internally
+
+# Syscal for heap access
+#    Syscall 12 
+#   : move the "program break" of the heap segment by %rdi
+#    and return the break location.
+.equ BRK_SYSCALL, 12
+.equ DEFAULT_HEAP_SIZE, 1024
+
+
+# Register Convention internally used. (Side Effects)
 #   %rdx - size requested
 #   %rcx - copy of memory_end
 #   %rsi - copy of pointor to current memory being examined
 
-search_heap:
+init_heap:
     movq $0, %rdi
     movq $BRK_SYSCALL, %rax
     syscall
@@ -32,11 +43,13 @@ search_heap:
     movq %rax, memory_end
     jmp start_alloc
 
-move_break:
+
+alloc_new_block:
     movq %rcx, %r8
+
     movq %rcx, %rdi
     addq %rdx, %rdi
-    movq %rdi, momery_end
+    movq %rdi, memory_end
 
     movq $BRK_SYSCALL, %rax
     syscall
@@ -44,10 +57,12 @@ move_break:
     movq $1, HDR_UFLAG_OFFSET(%r8)
     movq %rdx, HDR_SIZE_OFFSET(%r8)
 
-    addq $HEADER_SIZE, %r8
+    addq $SIZE_HEADER, %r8
     movq %r8, %rax
     ret
 
+
+# Entry Point 1 of this program
 # register
 # %rdi : size of data allocation
 allocate:
@@ -56,15 +71,15 @@ allocate:
     
     # First allocation, search heap first.
     cmpq $0, memory_start
-    je search_heap
+    je init_heap
 
 start_alloc:
+
     movq memory_start, %rsi
     movq memory_end, %rcx
-
 loop_alloc:
     cmpq %rsi, %rcx
-    je movq_break
+    je alloc_new_block
 
     cmpq $0, HDR_UFLAG_OFFSET(%rsi)
     jne move_next
@@ -73,7 +88,7 @@ loop_alloc:
     jb move_next
 
     # We don't change the size of memory block
-    movq %1, HDR_UFLAG_OFFSET(%rsi)
+    movq $1, HDR_UFLAG_OFFSET(%rsi)
     addq $SIZE_HEADER, %rsi
     movq %rsi, %rax
     ret
@@ -83,6 +98,9 @@ move_next:
     addq HDR_SIZE_OFFSET(%rsi), %rsi
     jmp loop_alloc
 
+
+
+# Entry Point 2 of this program
 deallocate:
     # We need to include the header size
     movq $0, HDR_UFLAG_OFFSET - SIZE_HEADER(%rdi)
