@@ -1,5 +1,4 @@
 .globl squareme
-.type squareme, @function
 
 .section .text
 squareme:
