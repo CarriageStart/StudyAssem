@@ -7,10 +7,28 @@ ld myexit.o -o myexit
 ld myexit.o myexit2.o -o myexit
 
 * Use standard C library (libc.a)
+    - Static Link
 ld myexit.o -static -lc -o myexit
+    - Dynamic Link
+ld myexit.o -rdynamic -lc -o myexit
 
 * To use gcc compiler change _start label to main.
-gcc myexit.s -static -o myexit
+    - Static Link
+gcc myexit.s -static -o myexit      (libc is default)
 gcc myexit.s -static -l? -o myexit  (Incorporate library)
+    - Dynamic Link
+gcc -rdynamic myexit.s -o myexit
+
+* Inspect flags(metadata) in ELF(Executable and Linking Format).
+    - ELF : The file format for linus kernel to load into 
+        the right location in the momry and proceed it.
+objdump -x myexit (Flags related)
+objdump -R myexit (reallocation related)
+
+* Remove unused flags in ELF.
+strip myexit
+
+* Inspect dynamically loaded library in ELF.
+ldd myexit
 
 
