@@ -42,6 +42,10 @@
          relative position from the base(usually stack base).
         => Therefore, 4(%rbx) is also a trivial representaion.
 
+  - .section .data  : Virtual Memory section that contains initialized(saved before execution : Load and play).
+  - .section .text  : Virtual Memory section that contains machine codes.
+  - .section .rdata : Vritual Memory section that contains read-only data(constant string, switch-table).
+  - .section .bss   : Vritual Memory section that contains un-initialized data(Can be assumed zero).
 
 * Constant (Macro Constant)
   - The constant is replaced with the declared value in compilation.
