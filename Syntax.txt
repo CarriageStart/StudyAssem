@@ -152,9 +152,10 @@ ENDLOOP
     b. Stacks(the last parameter pushed first)
   - Value to return needs to be in %rax and %rdx.
 
+        ++ Note that the function name is just a label of where the function starts!
     ex)
     # exponentfunc.s
-    .globl exponent                         # Function name
+    .globl exponent                         # Function name 
     .type exponent, @function               
     .equ LOCAL_NUM, -8                      # Local variable offset from base pointor
 
@@ -177,6 +178,8 @@ ENDLOOP
         leave
         ret
 
+            ++ Note the caller side should take care of how to stack the input parameters.
+                => Function side assumes the input parameters is well-organized.
     # main.s
     .globl _start
     .section .text

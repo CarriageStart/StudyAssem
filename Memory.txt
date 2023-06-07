@@ -163,4 +163,35 @@ people:
 endpeople:
 
 
+3. Pointor Operation : Asterisk(*)
+- Label is a kind of symbol that is exchanged to the memory access command by assembler.
+    ( LABEL_NAME  == value in memory address => Implicitly memory access! )
+- With '$', we can specify to assembler "Not change to the memory access command, but to address"
+    ( $LABEL_NAME == memory address )
+- The memory address can be stored in memory(Actually index in virtual memory).
+    ( movq $mytarget, target_pointor )
+- With '*', we can again specify to assmebler "Change to the memory access command"
+
+ex)
+.section .data
+target_pointor:
+    .quad 0
+print_text:
+    .ascii "Hello, world\n\0"
+
+.section .text
+mycode:
+    movq $mytarget, target_pointor
+    jmp *target_pointor
+
+mytarget:
+    movq stdout, %rdi
+    movq $print_text, %rsi
+    call fprintf
+
+    movq $60, %rax
+    movq $0, %rdi
+    syscall
+    
+
 

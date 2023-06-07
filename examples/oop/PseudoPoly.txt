@@ -1,0 +1,58 @@
+
+interface 
+Animal 
+{
+    function speak();
+    function eat();
+}
+
+class
+Dog implements Animal 
+{
+    method speak() {
+        stdout.fprintf("Ruff, ruff\n");
+    }
+
+    method eat() {
+        stdout.fprintf("I love dog biscuits\n");
+    }
+
+    method fetch() {    # Additional part
+        stdout.fprintf("I love to play fetch\n");
+    }
+}
+
+class
+Dog implements Animal 
+{
+    method speak() {
+        stdout.fprintf("Meow\n");
+    }
+
+    method eat() {
+        stdout.fprintf("Yum, yum fish\n");
+    }
+
+    method playWithSTring() {    # Additional part
+        stdout.fprintf("Ball of string, Yay!\n");
+    }
+}
+
+function
+doThings(Animal* a) 
+{
+    a.speak();
+    a.eat();
+    a.speak();
+    a.speak();
+}
+
+function
+main() 
+{
+    c = Cat.net();
+    d = Dog.net();
+
+    doThings(c);
+    doThings(d);
+}
