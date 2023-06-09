@@ -23,6 +23,102 @@ cmpq src, des
     : If positive, ZF 0 and "Positive Flag" (TODO)
     : If negative, ZF 0 and "negative Flag"
 
+* Floating point operation
+- Adding surfix "ss" makes it operate on single-value single precision values.
+- Adding surfix "sd" makes it operate on single-value double precision values.
+
+- Converting value format keeping the meaning.
+cvtsi2sd src, des
+    : Convert(cvt) scalar interger(si) to(2) scalar double
+    ( src : no %xmm registers, des : no %rax registers )
+cvtsi2ss src, des
+    ( src : no %xmm registers, des : no %rax registers )
+cvtsd2si src, des
+    ( des : no %xmm registers, src : no %rax registers )
+cvtss2si src, des
+    ( des : no %xmm registers, src : no %rax registers )
+cvtsd2ss src, des
+    ( src : no %rax registers, des : no %rax registers )
+cvtss2sd src, des
+    ( src : no %rax registers, des : no %rax registers )
+
+ex)
+cvtsi2sd %rax, %xmm0
+
+addss src, des
+addsd src, des
+
+subss src, des
+subsd src, des
+
+incss src
+incsd src
+
+desss src
+dessd src
+
+mulss src, des
+mulsd src, des
+
+divss src, des  # In this case, no mudular exists.
+divsd src, des
+
+
+* Packed Instruction
+- Add the operation unit surfix("p" + "s" or "d")
+    for the arithmetic instructions in integers
+addps src, des      # (Add packed single)
+    : Add in single precision units
+addpd src, des      # (Add packed double)
+    : Add in double precision units
+
+- Add the "p" prefix and operation unit surfix("b, w, d, q...")
+    for the arithmetic instructions in integers
+paddb %xmm0, %xmm1
+paddw %xmm0, %xmm1
+paddd %xmm0, %xmm1
+paddq %xmm0, %xmm1
+
+
+- Move instructions
+movq src, %xmm0     # Move with zero padding
+movsd src, %xmm0    # Move without zero padding(Scalar double)
+movss src, %xmm0    # Move without zero padding(Scalar single)
+
+- bit shift in xmm  
+(Packed shift left logical double quad-word)
+pslldq $bytes, %xmm0 
+(Packed shift right logical double quad-word)
+psrldq $bytes, %xmm0 # Shift by bytes the logial double quad-word
+
+- Packing
+movq src, %xmm0
+psldq $8, %xmm0
+movsd src, %xmm0
+
+- UnPacking
+movq %xmm0, des1
+psrdq $8, %xmm0
+movq %xmm0, des2
+
+- To move the whole 128 bits use
+movdqu %xmm0, %xmm1 (Double Quad-word Unaligned)
+movdqa %xmm0, %xmm1 (Double Quad-word Aligned)
+movups %xmm0, %xmm1 (Unaligned Packed singles)
+movaps %xmm0, %xmm1 (Aligned Packed singles)
+    ex) 
+    .globl main
+    .section .data
+    value:
+        .single 1., 1., 1., 1.  # 128 bits
+    value2:
+        .double 1., 2.          # 128 bits
+    .section .text
+    main:
+        movaps value, %xmm0
+        movaps value2, %xmm1
+        # movapd value2, %xmm1  # not used for speed issue.
+
 
 2. Flow control
 - No unit-specification is needed.

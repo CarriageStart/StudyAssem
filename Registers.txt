@@ -49,6 +49,9 @@ _start:
         ZF(zeroflag) 1 : the result of the operation is 0.
         CF(zeroflag) 1 : the result of the operation has carry.
 
+- SSE registers (%xmm0 ~ %xmm15 : SSE2)
+    - For SSE1, %xmm0 ~ %xmm7
+    - Each register has 128 bits.(512 bits for AVX)
 
 
 
