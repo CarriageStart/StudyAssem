@@ -166,6 +166,12 @@ endpeople:
 3. Pointor Operation : Asterisk(*)
 - Label is a kind of symbol that is exchanged to the memory access command by assembler.
     ( LABEL_NAME  == value in memory address => Implicitly memory access! )
+
+    * Similarly, this can be applied to register.
+        ( %rbp : treat bit pattern in register as a value )
+        ( (%rbp) : treat bit pattern in register as a memory address )
+                    => Add implicitly memory access
+
 - With '$', we can specify to assembler "Not change to the memory access command, but to address"
     ( $LABEL_NAME == memory address )
 - The memory address can be stored in memory(Actually index in virtual memory).

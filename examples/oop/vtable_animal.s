@@ -6,7 +6,7 @@
 
 # First fuction and next function
 .equ VTABLE_ANIMAL_SPEAK_OFFSET, 0
-.equ VTABLE_ANIMAL_SPEAK_OFFSET, 8
+.equ VTABLE_ANIMAL_EAT_OFFSET, 8
 
 dog_vtable_animal:
     .quad dog_speak

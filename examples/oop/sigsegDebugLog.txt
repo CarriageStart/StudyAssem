@@ -1,0 +1,245 @@
+
+Problem: 
+  In compilation of "vtable" program (gcc -static -o vtable ./vtable_*),
+ we had sigseg error in the glibc library. 
+
+Reason:
+  The issue was the stack-alignment.
+ Since -lc uses SSE2 instructions, we need to keep 16byte(256bits) stack alignment.
+ The violation happend in the vtable_dothing.s where I used "jmp" instead of "call"
+ for indirect call to "cat_speak" and "cat_eat".
+
+        
+ < Problem code >
+.globl doThing
+.section .text
+    # Input parameters :
+    #   rdi : object pointor
+    #   rsi : vtable pointor
+
+doThing:
+    .equ LCL_ANIMAL_OBJ_OFFSET, -8
+    .equ LCL_ANIMAL_VTABLE_OFFSET, -16
+
+    enter $16, $0
+    #  Usually, the input parameters in registers, which frequently 
+    # and continually used are needed to be stored in stack space.
+    movq %rdi, LCL_ANIMAL_OBJ_OFFSET(%rbp)
+    movq %rsi, LCL_ANIMAL_VTABLE_OFFSET(%rbp)
+
+    # Speak!
+    jmp *VTABLE_ANIMAL_SPEAK_OFFSET(%rsi)               <<== Problem!!!
+
+    # Eat!
+    movq LCL_ANIMAL_OBJ_OFFSET(%rbp), %rdi
+    movq LCL_ANIMAL_VTABLE_OFFSET(%rbp), %rsi
+    jmp *VTABLE_ANIMAL_EAT_OFFSET(%rsi)                 <<== Problem!!!
+
+    leave
+    ret
+ < Problem code >
+
+
+ In the debugger, we definitly see mis-alignment in the SIGSEGV point.
+
+ < Debugger >
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040b613 in fprintf ()
+(gdb) disassemble
+Dump of assembler code for function fprintf:
+   0x000000000040b5f0 <+0>:     endbr64
+   0x000000000040b5f4 <+4>:     sub    $0xd8,%rsp
+   0x000000000040b5fb <+11>:    mov    %rdx,0x30(%rsp)
+   0x000000000040b600 <+16>:    mov    %rcx,0x38(%rsp)
+   0x000000000040b605 <+21>:    mov    %r8,0x40(%rsp)
+   0x000000000040b60a <+26>:    mov    %r9,0x48(%rsp)
+   0x000000000040b60f <+31>:    test   %al,%al
+   0x000000000040b611 <+33>:    je     0x40b64a <fprintf+90>
+=> 0x000000000040b613 <+35>:    movaps %xmm0,0x50(%rsp)
+   0x000000000040b618 <+40>:    movaps %xmm1,0x60(%rsp)
+   0x000000000040b61d <+45>:    movaps %xmm2,0x70(%rsp)
+   0x000000000040b622 <+50>:    movaps %xmm3,0x80(%rsp)
+   0x000000000040b62a <+58>:    movaps %xmm4,0x90(%rsp)
+   0x000000000040b632 <+66>:    movaps %xmm5,0xa0(%rsp)
+   0x000000000040b63a <+74>:    movaps %xmm6,0xb0(%rsp)
+   0x000000000040b642 <+82>:    movaps %xmm7,0xc0(%rsp)
+   0x000000000040b64a <+90>:    mov    %fs:0x28,%rax
+   0x000000000040b653 <+99>:    mov    %rax,0x18(%rsp)
+   0x000000000040b658 <+104>:   xor    %eax,%eax
+   0x000000000040b65a <+106>:   lea    0xe0(%rsp),%rax
+   0x000000000040b662 <+114>:   mov    %rsp,%rdx
+   0x000000000040b665 <+117>:   xor    %ecx,%ecx
+   0x000000000040b667 <+119>:   mov    %rax,0x8(%rsp)
+   0x000000000040b66c <+124>:   lea    0x20(%rsp),%rax
+   0x000000000040b671 <+129>:   movl   $0x10,(%rsp)
+   0x000000000040b678 <+136>:   movl   $0x30,0x4(%rsp)
+   0x000000000040b680 <+144>:   mov    %rax,0x10(%rsp)
+   0x000000000040b685 <+149>:   call   0x40e700 <__vfprintf_internal>
+   0x000000000040b68a <+154>:   mov    0x18(%rsp),%rdx
+   0x000000000040b68f <+159>:   sub    %fs:0x28,%rdx
+   0x000000000040b698 <+168>:   jne    0x40b6a2 <fprintf+178>
+   0x000000000040b69a <+170>:   add    $0xd8,%rsp
+   0x000000000040b6a1 <+177>:   ret
+   0x000000000040b6a2 <+178>:   call   0x451dc0 <__stack_chk_fail_local>
+End of assembler dump.
+
+(gdb) info registers
+rax            0xffffffffffffffff  -1
+rbx            0x7fffffffdf68      140737488346984
+rcx            0x31                49
+rdx            0x0                 0
+rsi            0x4c50f0            5001456
+rdi            0x4c53a0            5002144
+rbp            0x7fffffffdd38      0x7fffffffdd38       <<== It is before the call to fprintf
+rsp            0x7fffffffdc58      0x7fffffffdc58   <<== Stack alignment mismatch. (odd number -8 happend)
+r8             0x4c7dd0            5012944                  * Tips : Stack starts from 0x??????fffff.
+r9             0x4ce7d0            5040080                      If an address ends with 0, it is 16 byte aligned.
+r10            0x80                128                          If an address ends with 8, it is 8 byte aligned.
+r11            0x4c58a0            5003424
+r12            0x1                 1
+r13            0x7fffffffdf58      140737488346968
+r14            0x4c17d0            4986832
+r15            0x1                 1
+rip            0x40b613            0x40b613 <fprintf+35>
+eflags         0x10286             [ PF SF IF RF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+ < Debugger >
+
+
+Review:
+ It took long time to debug this problem, since it was my first time to use gdb in a sense.
+But, to shorten time with systematic analysis, we need to followed these things.
+1. Check error point instruction
+    - In the consideration of "movaps %xmm0, 0x50(%rsp)", we need check 
+        a. It is legitimate to flow in this instruction
+        b. Memory access is legitimate : 0x50(%rsp)
+        c. Does the instruction "movaps", itself, problematic?
+
+            => In this case, it was c.
+
+2. In what case movaps give error? 
+    - Stack alignment...
+
+3. Where was alignment ruined?
+    - Select effective values(or data) for debugging the issue.
+        => What is effective value for stack alignment?
+            : %rbp, %rsp! (Stack frame)
+    - Trace back the point where the stack mis-aligned (Interval where problem happens)
+        => Trace back from the call stack
+
+ < call-Stack >
+#0  0x000000000040e79d in __vfprintf_internal ()
+#1  0x000000000040b68a in fprintf ()
+#2  0x00000000004016f7 in cat_speak ()
+#3  0x00007fffffffdd40 in ?? ()
+#4  0x0000000000401695 in dog_vtable_animal ()
+#5  0x00000000004ce780 in ?? ()
+#6  0x00007fffffffdd60 in ?? ()
+#7  0x000000000040179d in main ()
+ < call-Stack >
+
+        => We already checked mis-alignment in fprintf stack frame.
+          Therefore, check the "cat_speak" stack frame.
+
+ < cat_speak >
+Dump of assembler code for function cat_speak:
+   0x00000000004016d8 <+0>:     enter  $0x0,$0x0
+=> 0x00000000004016dc <+4>:     mov    0x4c5750,%rdi
+   0x00000000004016e4 <+12>:    mov    $0x4c50f0,%rsi
+   0x00000000004016eb <+19>:    mov    $0x0,%rax
+   0x00000000004016f2 <+26>:    call   0x40b5f0 <fprintf>
+   0x00000000004016f7 <+31>:    leave
+   0x00000000004016f8 <+32>:    ret
+End of assembler dump.
+(gdb) info registers
+rax            0x4ce7d0            5040080
+rbx            0x7fffffffdf58      140737488346968
+rcx            0x31                49
+rdx            0x0                 0
+rsi            0x401695            4200085
+rdi            0x4ce780            5040000
+rbp            0x7fffffffdd28      0x7fffffffdd28
+rsp            0x7fffffffdd28      0x7fffffffdd28           <<== Mis-aligned!
+r8             0x4c7dd0            5012944
+r9             0x4ce7d0            5040080
+r10            0x80                128
+r11            0x4c58a0            5003424
+r12            0x1                 1
+r13            0x7fffffffdf48      140737488346952
+r14            0x4c17d0            4986832
+r15            0x1                 1
+rip            0x4016dc            0x4016dc <cat_speak+4>
+eflags         0x206               [ PF IF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+ < cat_speak >
+        
+        => Keep going!
+
+ < doThing >
+Dump of assembler code for function doThing:
+   0x0000000000401755 <+0>:     enter  $0x10,$0x0
+=> 0x0000000000401759 <+4>:     mov    %rdi,-0x8(%rbp)
+   0x000000000040175d <+8>:     mov    %rsi,-0x10(%rbp)
+   0x0000000000401761 <+12>:    jmp    *0x0(%rsi)
+   0x0000000000401767 <+18>:    mov    -0x8(%rbp),%rdi
+   0x000000000040176b <+22>:    mov    -0x10(%rbp),%rsi
+   0x000000000040176f <+26>:    jmp    *0x8(%rsi)
+   0x0000000000401775 <+32>:    leave
+   0x0000000000401776 <+33>:    ret
+End of assembler dump.
+(gdb) info registers
+rax            0x4ce7d0            5040080
+rbx            0x7fffffffdf58      140737488346968
+rcx            0x31                49
+rdx            0x0                 0
+rsi            0x401695            4200085
+rdi            0x4ce780            5040000
+rbp            0x7fffffffdd40      0x7fffffffdd40
+rsp            0x7fffffffdd30      0x7fffffffdd30           <<== Stack aligned in 16 bytes! (Good so far)
+r8             0x4c7dd0            5012944
+r9             0x4ce7d0            5040080
+r10            0x80                128
+r11            0x4c58a0            5003424
+r12            0x1                 1
+r13            0x7fffffffdf48      140737488346952
+r14            0x4c17d0            4986832
+r15            0x1                 1
+rip            0x401759            0x401759 <doThing+4>
+eflags         0x206               [ PF IF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+ < doThing >
+
+
+        => Therefore, we can conclude that the problem lies in doThing's call to cat speak.
+
+    - Now, use brain...!
+    "call" instruction implicitly pushes the return instruction address, which is 8 bytes.
+    This mis-alignment is solved by "enter $0, $0" operation (or "enter $16 * n, $0"), which implicitly
+    pushes the previous %rbp, which is another 8 bytes.
+     But, we call the function with "jmp" not "call", therefore "enter" made a mismatch!
+
+Solution : Change "jmp" in doThing to "call".
+
+    Mis-branch:
+      When I changed "enter $0, $0" in cat_speak to "enter $8, $0", this function works well, but broked
+    after print. This is because in "ret" of cat_speak, we don't have return address since we didn't push
+    return address with the "call" instruction...
+
+
+    tips)
+        The problem is also noticable from the call stack : Where is "doThing" call from main??
+
+

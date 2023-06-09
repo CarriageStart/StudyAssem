@@ -106,8 +106,8 @@ ENDLOOP
             ( Previous %rbp needs to be saved somewhere )
     
       => When function is called,
-        a. Next instruction address of the current context is pushed.
-        b. Current %rbp is pushed in stack.
+        a. Next instruction address of the current context is pushed. ( 8 Bytes)
+        b. Current %rbp is pushed in stack. ( 8 Bytes )
         c. %rsp is saved to %rbp.(stack pointor)
         d. Allocate the local variables of function in stack.(Doing function content)
             ex) 

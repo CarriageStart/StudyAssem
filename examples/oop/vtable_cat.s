@@ -11,7 +11,6 @@ play_text:
     .ascii "Ball of string, Yay\n\0"
     
 .section .text
-
 .equ CAT_SIZE, 64
 
 cat_new:
@@ -25,6 +24,7 @@ cat_eat:
     enter $0, $0
     movq stdout, %rdi
     movq $eat_text, %rsi
+    movq $0, %rax
     call fprintf
     leave
     ret
@@ -33,6 +33,7 @@ cat_speak:
     enter $0, $0
     movq stdout, %rdi
     movq $speak_text, %rsi
+    movq $0, %rax
     call fprintf
     leave
     ret
