@@ -1,10 +1,8 @@
 
 ## Animal Interface
 .globl VTABLE_ANIMAL_SPEAK_OFFSET, VTABLE_ANIMAL_EAT_OFFSET
-
 .globl dog_vtable_animal
 .globl cat_vtable_animal
-.globl screechy_cat_vtable_animal
 
 # First fuction and next function
 .equ VTABLE_ANIMAL_SPEAK_OFFSET, 0
@@ -18,6 +16,3 @@ cat_vtable_animal:
     .quad cat_speak
     .quad cat_eat
 
-screechy_cat_vtable_animal:
-    .quad screechy_cat_speak
-    .quad cat_eat

@@ -10,9 +10,8 @@ memory_start:
 memory_end:
     .quad 0
 
+
 .section .text
-
-
 # Memory Block structure
 #   Header : Uflag(8 bytes) + block size(8 bytes)
 #   Data   : %rdi(what is requested)
@@ -34,49 +33,22 @@ memory_end:
 #   %rcx - copy of memory_end
 #   %rsi - copy of pointor to current memory being examined
 
-init_heap:
-    movq $0, %rdi
-    movq $BRK_SYSCALL, %rax
-    syscall
-
-    movq %rax, memory_start
-    movq %rax, memory_end
-    jmp start_alloc
-
-
-alloc_new_block:
-    movq %rcx, %r8
-
-    movq %rcx, %rdi
-    addq %rdx, %rdi
-    movq %rdi, memory_end
-
-    movq $BRK_SYSCALL, %rax
-    syscall
-
-    movq $1, HDR_UFLAG_OFFSET(%r8)
-    movq %rdx, HDR_SIZE_OFFSET(%r8)
-
-    addq $SIZE_HEADER, %r8
-    movq %r8, %rax
-    ret
-
 
 # Entry Point 1 of this program
-# register
-# %rdi : size of data allocation
 allocate:
+    #   Inputs parameter :
+    #   %rdi => size of data allocation
     movq %rdi, %rdx
     addq $SIZE_HEADER, %rdx
     
-    # First allocation, search heap first.
+    # Check whether the heap is initialized.
     cmpq $0, memory_start
     je init_heap
 
-start_alloc:
-
-    movq memory_start, %rsi
+start_alloc:                # Rather than storing the return address
+    movq memory_start, %rsi # jmp is more fast(addr is labeled in instruction)!
     movq memory_end, %rcx
+
 loop_alloc:
     cmpq %rsi, %rcx
     je alloc_new_block
@@ -93,10 +65,37 @@ loop_alloc:
     movq %rsi, %rax
     ret
 
-
 move_next:
     addq HDR_SIZE_OFFSET(%rsi), %rsi
     jmp loop_alloc
+
+alloc_new_block:
+    movq %rcx, %r8              # We have enough number of hands.
+
+    movq %rcx, %rdi
+    addq %rdx, %rdi
+    movq %rdi, memory_end
+
+    movq $BRK_SYSCALL, %rax
+    syscall
+
+    movq $1, HDR_UFLAG_OFFSET(%r8)
+    movq %rdx, HDR_SIZE_OFFSET(%r8)
+
+    addq $SIZE_HEADER, %r8
+    movq %r8, %rax
+    ret
+
+init_heap:
+    #  Syscall 12 (brk) moves the memory break(the end of memory segmenation)
+    # by %rdi, and return new address of the memory break.
+    movq $0, %rdi               # If rdi==0, it just give memory break address.
+    movq $BRK_SYSCALL, %rax     # Since no heap space is used, it is start address
+    syscall                     # of heap space.
+
+    movq %rax, memory_start
+    movq %rax, memory_end
+    jmp start_alloc
 
 
 
