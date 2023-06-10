@@ -92,11 +92,11 @@ ENDLOOP
   Stack Frame | |                   |
               - |                   |
               - | Label Address     |   => Location to jump in return.                  | (Call instruction)
-   Current    | | Previous %rbp     |   <= %rbp points to this location of stack.           | (Enter instruction)   
+   Current    | | Previous %rbp     |   <= %rbp points to this location of stack.           | (Enter $36, $0 instruction)   
   Stack Frame | |   Local var 1     |   -8(%rbp)  => Local(non-global) variables            |  |
               | |   Local var 2     |   -16(%rbp)     of called function.                   |  | controllable size
-              v |   Local var 3     |   -24(%rbp) <= %rsp points to this location.          |  |
-                |                   |   
+              v |   Local var 3     |   -24(%rbp)                                           |  |
+                |   Local var 4     |   -30(%rbp) <= %rsp points to this location.          |  | (16 byte alignment)
                                         (start part of memory)
                                         (=> Stack grows downward)
         

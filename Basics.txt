@@ -1,4 +1,10 @@
 
+* Program Loader Flag
+_etext : The first address following the program text.
+_edata : The first address following the program data region.
+_end : The first address following the data region that is not
+        initialized. (Often denoted as end)
+
 * Value format
   - Decimal
   $10
@@ -16,6 +22,10 @@
 * Label is pointor(Label labels memory address).
     => To use the value stored in that address, use LABEL_NAME.
     => To use as a memory address, use $LABEL_NAME.
+    => Compiler section flags also can be denoted.
+        ex) movq $_end, %rax
+        ex2) movq $.data, %rax
+        ex2) movq $.bss, %rax
 
   - Label is divided into Symbolic and numeric, or data access.
 
@@ -37,6 +47,8 @@
     => The address in label is merely a relative position w.r.t its file location when the program is loaded.
     => All label is a relative distance in Byte from the declared 
      section(".section .data" or ".section .text").
+            * Such section can be noted with $.data
+                ex) movq $.rodata, %rdx
         => You often encounter an analogue of memory address as 
          "0x00000000","0x00000004". Note that this is just a
          relative position from the base(usually stack base).
