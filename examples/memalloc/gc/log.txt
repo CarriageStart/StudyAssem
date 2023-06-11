@@ -1,0 +1,17 @@
+
+1. Pointor List is needed, since we don't know how wide and deep pointors in heap is 
+    ex) 
+    void** a[10];
+    a[0] = allocate(100);
+    => There will be 10 pointors in a row and it has depth, too.
+
+    First : mark "use" it can be touched directly from the base objects
+        => And save the items in directly-touchable memory block if they
+          points to heap item.
+            => Two options : does it have to point the start addr or not...?
+    Second: From the saved pointors, check whether they points are memory block
+        => If so, mark in use and append their items behind the list for recursive search.
+            => To avoid circulation, check whether it is marked as "use".
+
+2. What people knows(what will be stored in stack and data section) doesn't know
+    there is header for every memory block...
