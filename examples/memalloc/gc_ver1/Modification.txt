@@ -1,0 +1,9 @@
+
+1. Use Pointor list as a stack
+    In search the data region, if it finds pointor-like, then push the current indexing addr in data region.
+        => Recursive way
+    When done, pop up and repeat
+
+
+2. We don't use anything like gc_walk, or gc_valid
+

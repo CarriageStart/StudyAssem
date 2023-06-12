@@ -24,6 +24,37 @@ ELSE_STATEMENT:
     movq 0, %rdi
     movq 60, %rax
     syscall
+
+ex) "And" joined
+.gloabl _start
+.section .data
+numbers:
+    .quad 5, 0
+.section .text
+_start:
+    movq $8, %rbx
+    movq numbers(,%rbx, 1), %rax
+
+# DeMorgan
+# Condition 1 && Condition 2 == !Condition 1 ^ !Condition 2
+    # not Condition 1
+    cmp numbers(, %rbx, 0), %rax 
+    # Jump if not satisfied
+    jae ELSE_STATEMENT
+    # not Condition 2
+    cmp $3, %rax
+    jbe ELSE_STATEMENT
+
+# True Statement
+    movq 1, %rdi
+    movq 60, %rax
+    syscall
+
+# Jump if not satisfied
+ELSE_STATEMENT:
+    movq 0, %rdi
+    movq 60, %rax
+    syscall
     
 
 2. Loop within condition
