@@ -29,14 +29,19 @@ gc_scan_init:
     subq heap_start, %rdx
     addq %rdx, %rdi
 
-    # Initiate the pointor space
-    movq pointor_list_start, %rdx
-    movq %rdx, pointor_list_current
+    movq %rdi, %rsi
+    movq heap_end, %rdi
 
-    addq %rdx, %rdi
-    movq %rdi, pointor_list_end 
-    movq $BRK_SYSCALL, %rax
-    syscall
+    # Initiate the pointor space
+    call gc_stack_init
+
+#movq pointor_stack_start, %rdx
+#movq %rdx, pointor_stack_current
+#
+#addq %rdx, %rdi
+#movq %rdi, pointor_stack_end 
+#movq $BRK_SYSCALL, %rax
+#syscall
     
     leave
     ret

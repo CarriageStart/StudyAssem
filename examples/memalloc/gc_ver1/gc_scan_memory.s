@@ -2,62 +2,71 @@
 
 .global gc_scan_memory
 .section .text
+
+
 # Side effect 
-#   %rax : current addr on pointor_list
 #   %rbx : General Purpose
-#   %rcx : Loop
-#   %rdx : General Purpose
+#   %rdx : Addr to test
 #   %r8 : heap_start
 #   %r9 : heap_end
+#   %r10 : current addr on pointor_stack
 gc_scan_memory:
     # Input Parameters:
     #   %rdi - smaller address
     #   %rsi - bigger address
     enter $0, $0
     
-    movq pointor_list_current, %rax
+    movq pointor_stack_current, %r10
     movq heap_start, %r8
     movq heap_end, %r9
 
-loop:
+_loop:
     cmpq %rdi, %rsi
-    jmp exit_loop
+    jmp _exit_loop
 
 
     # Check whether it contains addr on heap(addr + format)
     movq (%rdi), %rdx
     movq %rdx, %rbx
         # Condition on address (Block within heap space)
-    subq $HEADER_SIZE, %rbx
-    cmpq %rbx, %r8
-    jb move_next
+    subq $HEADER_SIZE, %rdx
+    cmpq %rdx, %r8
+    jb _move_next
 
-    addq HDR_SIZE_OFFSET(%rbx), %rbx
-    cmpq %rbx, %r9
-    ja move_next
+    movq %rbx, %rdx
+    addq HDR_SIZE_OFFSET(%rdx), %rdx
+    cmpq %rdx, %r9
+    ja _move_next
 
-        # Condition on the memory block format : We marked 0.
-    cmpq $0, HDR_IN_USE_OFFSET - HEADER_SIZE(%rdi)
-    jne move_next
+        # Condition on the memory block format : 0 or 1
+    movq %rbx, %rdx
+    cmpq $0, HDR_IN_USE_OFFSET(%rdx)
+    je _continue
+    cmpq $1, HDR_IN_USE_OFFSET(%rdx)
+    je _continue
+    jmp _move_next
 
+_continue:
+    pushq %rdi
+    pushq %rsi
 
     # Mark and Insert : We postpone Deep inspection
-    movq $1, HDR_IN_USE_OFFSET - HEADER_SIZE(%rdx)
+    movq $1, HDR_IN_USE_OFFSET(%rdx)
+    movq HDR_SIZE_OFFSET(%rdx), %rsi
+    addq $HEADER_SIZE, %rdx
         # Insert
-    movq HDR_SIZE_OFFSET-HEADER_SIZE(%rdx), %rcx
-    subq $HEADER_SIZE, %rcx
-insert_loop:
-    movq %rdx, (%rax)
-    addq $8, %rax
-    addq $8, %rdx
-    loopq insert_loop
-move_next:
+    movq %rdx, %rdi
+    call gc_push_block
+
+    movq %rbx, %rdx
+    popq %rsi
+    popq %rdi
+
+_move_next:
     addq $8, %rdi
-    jmp loop
+    jmp _loop
 
-
-exit_loop:
-    movq %rax, pointor_list_current
+_exit_loop:
     leave
     ret
 
