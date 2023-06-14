@@ -6,8 +6,10 @@
 .equ gc_default_stack_extension, 256
 gc_stack_init:
     # Input parameters
-    # %rdi : End of heap
-    # %rsi : Requseted Size of pointor stack
+    #   %rdi : End of heap
+    #   %rsi : Requseted Size of pointor stack
+    # Side effect
+    #   %rax : In case of side effect
     enter $0, $0    
     
     movq %rdi, pointor_stack_start
