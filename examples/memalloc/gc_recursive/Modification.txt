@@ -1,0 +1,3 @@
+
+ We don't use any list or stack, just recursively mark it.
+

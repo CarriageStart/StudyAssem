@@ -3,6 +3,8 @@
 # Identical to allocate except it alligned stack and alloc size.
 
 .section .text
+# Input parameters
+#   %rdi - Size requsted
 # Side Effect:
 #   %rdx - Size requsted
 #   %rsi - Current memory examined
@@ -10,8 +12,6 @@
 
 # Entry Point
 gc_allocate:
-    # Input parameters
-    #   %rdi - Size requsted
     enter $16, $0
     movq %rdi, -8(%rbp)
 
