@@ -13,45 +13,52 @@
 # Entry Point
 gc_allocate:
     enter $16, $0
-    movq %rdi, -8(%rbp)
 
+    # Calculate the required size in 16 byte aligned
     movq %rdi, %rdx 
     addq $HEADER_SIZE, %rdx
-    addq $16, %rdx                  # Align requsted size
-    andq $0xfffffffffffffff0, %rdx
+    addq $16, %rdx                 
+    andq $0xfffffffffffffff0, %rdx # Align requsted size
+
+    movq %rdx, -8(%rbp)
     # Consider last byte as decimal. Add 1 and floor down.
 
     movq heap_start, %rsi
     movq heap_end, %rcx
 
-allocate_loop:
+_allocate_loop:
     cmpq %rsi, %rcx
     je allocate_move_break
     
     cmpq $0, HDR_IN_USE_OFFSET(%rsi)
-    jne allocate_move_index
+    jne _allocate_move_index
 
     cmpq %rdx, HDR_SIZE_OFFSET(%rsi)
-    jb allocate_move_index
+    jb _allocate_move_index
 
-    jmp allocate_init_block
+    jmp _allocate_init_block
 
-allocate_move_index:
+_allocate_move_index:
     addq HDR_SIZE_OFFSET(%rsi), %rsi
-    jmp allocate_loop
+    jmp _allocate_loop
 
-allocate_init_block:
+_allocate_init_block:
     movq $1, HDR_IN_USE_OFFSET(%rsi)
-    movq %rdx, HDR_SIZE_OFFSET(%rsi)
+
+    movq %rsi, %rcx
+    addq %rdx, %rcx
+
     addq $HEADER_SIZE, %rsi
 
     movq %rsi, %rax
-    movq -8(%rbp), %rcx
 _zero_loop:
+    cmpq %rsi, %rcx
+    je _return
+
     movq $0, (%rsi)
-    incq %rsi
-    loop _zero_loop
-    
+    addq $8,  %rsi
+    jmp _zero_loop
+_return:
     leave
     ret
 
@@ -65,7 +72,8 @@ allocate_move_break:
     movq $BRK_SYSCALL, %rax     # Note syscall 12 changes %rcx
     syscall                     # But leave %rsi and %rdx intact.
 
-    jmp allocate_init_block
+    movq %rdx, HDR_SIZE_OFFSET(%rsi)
+    jmp _allocate_init_block
 
 
 

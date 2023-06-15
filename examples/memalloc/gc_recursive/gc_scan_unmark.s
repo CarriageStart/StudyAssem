@@ -14,14 +14,14 @@ gc_scan_unmark:
     movq heap_start, %rcx
     movq heap_end, %rdx
 
-loop:
+_unmark_loop:
     cmpq %rcx, %rdx
-    je finish
+    je _unmark_finish
     
     movq $0, HDR_IN_USE_OFFSET(%rcx)
     addq HDR_SIZE_OFFSET(%rcx), %rcx
-    jmp loop
+    jmp _unmark_loop
 
-finish:
+_unmark_finish:
     leave 
     ret
