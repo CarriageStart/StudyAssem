@@ -17,7 +17,12 @@ ld myexit.o -rdynamic -lc -o myexit
 gcc myexit.s -static -o myexit      (libc is default)
 gcc myexit.s -static -l? -o myexit  (Incorporate library)
     - Dynamic Link
-gcc -rdynamic myexit.s -o myexit
+gcc (-rdynamic) myexit.s -o myexit
+    => Some compiler use PIE as the default option. 
+     In the case where your code is not PIE, then use
+     "-no-pie" option, that is following.
+    gcc -rdynamic -no-pie myexit.s -o myexit
+
 
 * Inspect flags(metadata) in ELF(Executable and Linking Format).
     - ELF : The file format for linus kernel to load into 

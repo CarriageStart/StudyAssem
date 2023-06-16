@@ -26,10 +26,10 @@ gc_scan_start:
     call gc_scan_recursively
     
     # inspect from the data region
-    #movq $.rodata, %rdi
-    #andq $0xfffffffffffffff8, %rdi
-    #movq $_end, %rsi
-    #call gc_scan_recursively
+    movq $.rodata, %rdi
+    andq $0xfffffffffffffff8, %rdi
+    movq $_end, %rsi
+    call gc_scan_recursively
 
     leave
     ret

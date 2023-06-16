@@ -119,6 +119,11 @@ _start:
     - "omit(BASEREG, IDXREG, MULTIPLIER)"
 
 6. Program Counter(PC)-Relative addressing mode
+    - It has the special syntax to indicate this.
+    - LABEL(%rip) :
+     Transform this symbol as an relative address from %rip/
+        => More generally : LABEL(%REG)
+    - Only works after x86-64 instruction set architecture.
 
 7. lea instruction(Load Effective Address)
     ex) leaq src, des
