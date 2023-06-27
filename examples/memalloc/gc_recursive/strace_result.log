@@ -1,0 +1,64 @@
+execve("./gc_test_data", ["./gc_test_data"], 0x7ffed24a4158 /* 32 vars */) = 0 <0.000372>
+brk(NULL)                               = 0x1edb000 <0.000055>
+arch_prctl(0x3001 /* ARCH_??? */, 0x7fff468094c0) = -1 EINVAL (Invalid argument) <0.000052>
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5420d3f000 <0.000052>
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory) <0.000054>
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3 <0.000054>
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=28519, ...}, AT_EMPTY_PATH) = 0 <0.000071>
+mmap(NULL, 28519, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f5420d38000 <0.000114>
+close(3)                                = 0 <0.000055>
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3 <0.000069>
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832 <0.000106>
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784 <0.000068>
+pread64(3, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48 <0.000063>
+pread64(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0i8\235HZ\227\223\333\350s\360\352,\223\340."..., 68, 896) = 68 <0.000051>
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=2216304, ...}, AT_EMPTY_PATH) = 0 <0.000064>
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784 <0.000051>
+mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f5420b10000 <0.000064>
+mmap(0x7f5420b38000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7f5420b38000 <0.000064>
+mmap(0x7f5420ccd000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x7f5420ccd000 <0.000064>
+mmap(0x7f5420d25000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000) = 0x7f5420d25000 <0.000064>
+mmap(0x7f5420d2b000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f5420d2b000 <0.000082>
+close(3)                                = 0 <0.000045>
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5420b0d000 <0.000046>
+arch_prctl(ARCH_SET_FS, 0x7f5420b0d740) = 0 <0.000044>
+set_tid_address(0x7f5420b0da10)         = 8138 <0.000044>
+set_robust_list(0x7f5420b0da20, 24)     = 0 <0.000044>
+rseq(0x7f5420b0e0e0, 0x20, 0, 0x53053053) = 0 <0.000044>
+mprotect(0x7f5420d25000, 16384, PROT_READ) = 0 <0.000049>
+mprotect(0x403000, 4096, PROT_READ)     = 0 <0.000049>
+mprotect(0x7f5420d79000, 8192, PROT_READ) = 0 <0.000050>
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0 <0.000046>
+munmap(0x7f5420d38000, 28519)           = 0 <0.000055>
+brk(NULL)                               = 0x1edb000 <0.000046>
+newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0 <0.000049>
+getrandom("\x68\xfe\x39\xd5\x23\x89\x50\xf7", 8, GRND_NONBLOCK) = 8 <0.000046>
+brk(NULL)                               = 0x1edb000 <0.000046>
+brk(0x1efc000)                          = 0x1efc000 <0.000047>
+write(1, "Currently, 0 bytes are used in h"..., 36) = 36 <0.000084>
+brk(0x1edb210)                          = 0x1edb210 <0.000069>
+write(1, "Allocation 1: 0x1edb010\n", 24) = 24 <0.000064>
+write(1, "Currently, 528 bytes are used in"..., 38) = 38 <0.000075>
+brk(0x1edb2f0)                          = 0x1edb2f0 <0.000064>
+write(1, "Allocation 2: 0x1edb220\n", 24) = 24 <0.000077>
+write(1, "Currently, 752 bytes are used in"..., 38) = 38 <0.000080>
+write(1, "Start first scan\n", 17)      = 17 <0.000086>
+write(1, "Currently, 752 bytes are used in"..., 38) = 38 <0.000067>
+brk(0x1edb430)                          = 0x1edb430 <0.000052>
+write(1, "Allocation 3: 0x1edb300\n", 24) = 24 <0.000075>
+write(1, "Start second scan\n", 18)     = 18 <0.000067>
+write(1, "Currently, 1072 bytes are used i"..., 39) = 39 <0.000074>
+brk(0x1edb510)                          = 0x1edb510 <0.000062>
+write(1, "Allocation 4: 0x1edb440\n", 24) = 24 <0.000068>
+write(1, "Start third scan\n", 17)      = 17 <0.000071>
+write(1, "Currently, 976 bytes are used in"..., 38) = 38 <0.000071>
+brk(0x1edb720)                          = 0x1edb720 <0.000063>
+write(1, "Allocation 5: 0x1edb520\n", 24) = 24 <0.000068>
+write(1, "Start forth scan\n", 17)      = 17 <0.000072>
+write(1, "Currently, 752 bytes are used in"..., 38) = 38 <0.000072>
+write(1, "Allocation 6: 0x1edb010\n", 24) = 24 <0.000071>
+write(1, "Allocation 7: 0x1edb220\n", 24) = 24 <0.000073>
+write(1, "Currently, 752 bytes are used in"..., 38) = 38 <0.000073>
+write(1, "Currently, 0 bytes are used in h"..., 36) = 36 <0.000071>
+exit_group(0)                           = ?
++++ exited with 0 +++
