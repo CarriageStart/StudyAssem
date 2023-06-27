@@ -6,15 +6,15 @@ void gc_init();
 void gc_scan();
 int gc_show_heap_size();
 
-volatile void **foo = NULL;
-volatile void **goo = NULL;
+//volatile void **foo = NULL;
+//volatile void **goo = NULL;
 
 int main() {
     gc_init();
     gc_show_heap_size();
     
-    //volatile void **foo = NULL;
-    //volatile void **goo = NULL;
+    volatile void **foo = NULL;
+    volatile void **goo = NULL;
 
     foo = gc_allocate(500);
     fprintf(stdout, "Allocation 1: %p\n", foo);

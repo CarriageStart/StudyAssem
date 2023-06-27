@@ -14,7 +14,7 @@
 #   %rdx : Addr to test
 #   %r8 : heap_start
 #   %r9 : heap_end
-.section .rodata # To reference the data region
+.section .data # To reference the data region
 .section .text
 gc_scan_start:
     enter $0, $0
@@ -26,7 +26,9 @@ gc_scan_start:
     call gc_scan_recursively
     
     # inspect from the data region
-    movq $.rodata, %rdi
+    #  - Change .rodata to .data
+    #  => rdata cannot have heap memory reference...
+    movq $.data, %rdi
     andq $0xfffffffffffffff8, %rdi
     movq $_end, %rsi
     call gc_scan_recursively
