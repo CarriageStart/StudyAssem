@@ -1,0 +1,20 @@
+
+1. execve
+int 
+execve
+(const char* filename, char* const argv[], char* const envp[]);
+
+It executes the program(binary format) pointed to by filename.
+(it could be interpreter, ex: execeve("#!python3 "something.py", ...);)
+It doesn't return on success, and the text, data, bss, and stack of the
+calling process are overwritten to those of the "filename" program.
+
+It 
+
+=> They convey to the main program. 
+    ex: int main(int argc, char* const argv[], char* const envp[]);
+   
+    details)
+    1. PID is inherited.(doesn't change)
+
+

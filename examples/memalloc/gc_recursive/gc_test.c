@@ -1,4 +1,6 @@
 
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 
 void* gc_allocate(int);
@@ -6,15 +8,21 @@ void gc_init();
 void gc_scan();
 int gc_show_heap_size();
 
-//volatile void **foo = NULL;
-//volatile void **goo = NULL;
+volatile void **foo = NULL;
+volatile void **goo = NULL;
+
+static char command[1000];
 
 int main() {
     gc_init();
     gc_show_heap_size();
+
+    pid_t pid = getpid();
+    snprintf(command, 1000, "cat /proc/%d/maps", pid);
+    system(command);
     
-    volatile void **foo = NULL;
-    volatile void **goo = NULL;
+    //volatile void **foo = NULL;
+    //volatile void **goo = NULL;
 
     foo = gc_allocate(500);
     fprintf(stdout, "Allocation 1: %p\n", foo);

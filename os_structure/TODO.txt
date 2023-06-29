@@ -1,0 +1,7 @@
+
+1. Explain the strace result of run-method.
+
+2. Add syscall you investigated.
+
+3. ?
+

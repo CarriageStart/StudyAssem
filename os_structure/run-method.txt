@@ -4,8 +4,9 @@ strace -T -o logname.log ./executable
 cat logname.log
 
 ex) strace -T ./fork-and-exec
-// Loader (OS)
+// Fork and Execve : Process creation and change
 execve("./fork-and-exec", ["./fork-and-exec"], 0x7ffe3407c578 /* 35 vars */) = 0 <0.000558>
+// Loader (OS)
 brk(NULL)                               = 0x55609ecb4000 <0.000061>
 arch_prctl(0x3001 /* ARCH_??? */, 0x7ffd9d0b7800) = -1 EINVAL (Invalid argument) <0.000095>
 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffad3209000 <0.000076>
