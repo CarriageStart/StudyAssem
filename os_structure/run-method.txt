@@ -3,11 +3,13 @@
 strace -T -o logname.log ./executable
 cat logname.log
 
-2. ps-schd
-- taskset : -c flag => specify the logic cpu to take charge of task
+2. taskset : -c flag => specify the logic cpu to take charge of task
     taskset -c cpu_num Command
-taskset -c 0 ./ps-sched 1 100 1 > output-1core-1process.txt
+taskset -c 0, 4 ./ps-sched 2 100 1 > output-1core-1process.txt
 
 3. sar
 sar -P ALL 1
 
+4. time
+
+5. 
