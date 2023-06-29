@@ -3,13 +3,81 @@
 strace -T -o logname.log ./executable
 cat logname.log
 
+ex) strace -T ./fork-and-exec
+// Loader (OS)
+execve("./fork-and-exec", ["./fork-and-exec"], 0x7ffe3407c578 /* 35 vars */) = 0 <0.000558>
+brk(NULL)                               = 0x55609ecb4000 <0.000061>
+arch_prctl(0x3001 /* ARCH_??? */, 0x7ffd9d0b7800) = -1 EINVAL (Invalid argument) <0.000095>
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffad3209000 <0.000076>
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory) <0.000079>
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3 <0.000078>
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=28519, ...}, AT_EMPTY_PATH) = 0 <0.000069>
+mmap(NULL, 28519, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7ffad3202000 <0.000076>
+close(3)                                = 0 <0.000069>
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3 <0.000070>
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832 <0.000051>
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784 <0.000050>
+pread64(3, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48 <0.000049>
+pread64(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0i8\235HZ\227\223\333\350s\360\352,\223\340."..., 68, 896) = 68 <0.000049>
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=2216304, ...}, AT_EMPTY_PATH) = 0 <0.000050>
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784 <0.000050>
+mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7ffad2fda000 <0.000054>
+mmap(0x7ffad3002000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7ffad3002000 <0.000055>
+mmap(0x7ffad3197000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x7ffad3197000 <0.000052>
+mmap(0x7ffad31ef000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000) = 0x7ffad31ef000 <0.000053>
+mmap(0x7ffad31f5000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7ffad31f5000 <0.000053>
+close(3)                                = 0 <0.000049>
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffad2fd7000 <0.000051>
+arch_prctl(ARCH_SET_FS, 0x7ffad2fd7740) = 0 <0.000049>
+set_tid_address(0x7ffad2fd7a10)         = 202 <0.000059>
+set_robust_list(0x7ffad2fd7a20, 24)     = 0 <0.000077>
+rseq(0x7ffad2fd80e0, 0x20, 0, 0x53053053) = 0 <0.000114>
+mprotect(0x7ffad31ef000, 16384, PROT_READ) = 0 <0.000074>
+mprotect(0x55609e439000, 4096, PROT_READ) = 0 <0.000074>
+mprotect(0x7ffad3243000, 8192, PROT_READ) = 0 <0.000072>
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0 <0.000056>
+munmap(0x7ffad3202000, 28519)           = 0 <0.000073>
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7ffad2fd7a10) = 203 <0.000123>
+getpid(I'm child! my pid is 203.
+)                                = 202 <0.000057>
+
+
 2. taskset : -c flag => specify the logic cpu to take charge of task
     taskset -c cpu_num Command
 taskset -c 0, 4 ./ps-sched 2 100 1 > output-1core-1process.txt
 
 3. sar
-sar -P ALL 1
+sar -P ALL 1 ( 1: Record per 1 second)
+ex)
+Linux 5.15.90.1-microsoft-standard-WSL2 (DESKTOP-O1CLCTF) 	06/29/23 	_x86_64_	(8 CPU)
+18:02:11        CPU     %user     %nice   %system   %iowait    %steal     %idle
+18:02:11        all      0.07      0.00      0.21      0.05      0.00     99.67
+18:02:11          0      0.07      0.00      0.71      0.01      0.00     99.21
+18:02:11          1      0.13      0.00      0.17      0.05      0.00     99.65
+18:02:11          2      0.10      0.00      0.23      0.10      0.00     99.58
+18:02:11          3      0.00      0.00      0.02      0.02      0.00     99.96
+18:02:11          4      0.03      0.00      0.12      0.11      0.00     99.75
+18:02:11          5      0.00      0.00      0.01      0.03      0.00     99.96
+18:02:11          6      0.07      0.00      0.27      0.04      0.00     99.62
+18:02:11          7      0.13      0.00      0.19      0.02      0.00     99.66
 
-4. time
 
-5. 
+4. ps
+- Cat the data of process
+ps ax : 'a'll - in e'x'ecution
+ex) 
+ "Stat" => S : Sleep or hold for event, R: Run or wating run, Z: Zombie(wait for parent process)
+  PID TTY      "STAT"   TIME COMMAND
+    1 ?        Sl     0:00 /init
+    4 ?        Sl     0:00 plan9 --control-socket 5 --log-level 4 --server-fd 6 --pipe-fd 8 --log-truncate
+   77 ?        Ss     0:00 /init
+   78 ?        S      0:00 /init
+   79 pts/1    Ss     0:00 -bash
+  182 pts/1    S+     0:00 vim run-method.txt
+  183 pts/1    S+     0:00 /bin/bash -c (ps ax)>/tmp/v4RTVXs/0 2>&1
+  184 pts/1    R+     0:00 ps ax
+
+
+5. time
+
+6. 
