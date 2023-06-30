@@ -1,0 +1,11 @@
+
+1. Cache memory
+cat /sys/devices/system/cpu/cpu0/cache/index0/*
+type : kinds of data to cache in this cache memory
+coherent_line_size  : 64    (Cache line size)
+level               : 1
+shared_cpu_list     : 0-1
+cache size          : 32K
+type                : Data  ( Only for data => Code, Unified)
+
+

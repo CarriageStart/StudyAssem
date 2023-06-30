@@ -1,0 +1,19 @@
+
+1. Result of 
+"for i in 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 ; do ./cache $i ; done"
+
+Time per loop : 0.458549 ns, Size :     4 KB    => L1 cache is fine enough.
+Time per loop : 0.374619 ns, Size :     8 KB        => As size increases, more fast due to optimization in MCU
+Time per loop : 0.332717 ns, Size :    16 KB
+Time per loop : 0.340279 ns, Size :    32 KB
+Time per loop : 1.827532 ns, Size :    64 KB    => We need to refer L2 Cache
+Time per loop : 1.809722 ns, Size :   128 KB    
+Time per loop : 2.105953 ns, Size :   256 KB    => We need to refer L3 Cache(We have instructions, too!)
+Time per loop : 2.450819 ns, Size :   512 KB
+Time per loop : 2.483211 ns, Size :  1024 KB
+Time per loop : 2.509928 ns, Size :  2048 KB
+Time per loop : 2.502082 ns, Size :  4096 KB
+Time per loop : 3.655742 ns, Size :  8192 KB    => We start to need Memory acces!
+Time per loop : 7.844710 ns, Size : 16384 KB        => Memory access is proportional to size
+Time per loop : 8.554499 ns, Size : 32768 KB
+
