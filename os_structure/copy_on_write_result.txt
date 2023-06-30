@@ -1,0 +1,29 @@
+
+
+- Result of "copy_on_write"
+*** free memory info before fork ***:
+               total        used        free      shared  buff/cache   available
+Mem:         6029248      297180*    5470356        2280      261712     5509344
+Swap:        2097152           0     2097152
+
+*** child ps info before memory access ***: (No significant minor fault)
+pid     comm         vsz*    rss*     min_flt   max_flt
+  635 copy_on_write   105180  1004     26      0
+
+***free memory info before memory access ***:   (Memory used is not changed)
+               total        used        free      shared  buff/cache   available
+Mem:         6029248      297680*    5469856        2280      261712     5508844
+Swap:        2097152           0     2097152
+
+***child ps info after memory access ***:   (Minor fault increase significantly)
+pid     comm         vsz*    rss*     min_flt   max_flt
+  635 copy_on_write   105180 103400   587      0
+                    - No change in vsz, but rss increases
+
+***free memory info after memory access ***:    (Memory used is changed)
+               total        used        free      shared  buff/cache   available
+Mem:         6029248      401332*    5366204        2280      261712     5405192
+Swap:        2097152           0     2097152
+
+
+

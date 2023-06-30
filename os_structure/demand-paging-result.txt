@@ -1,0 +1,103 @@
+1. Physical memory used comparison.
+- Result of "demand-paging"
+Fri Jun 30 23:12:52 2023: before allocation, please press Enter key
+Fri Jun 30 23:12:53 2023: allocated 100MB, please press Enter key
+Fri Jun 30 23:12:55 2023: touched 10MB.
+Fri Jun 30 23:12:56 2023: touched 20MB.
+Fri Jun 30 23:12:57 2023: touched 30MB.
+Fri Jun 30 23:12:58 2023: touched 40MB.
+Fri Jun 30 23:12:59 2023: touched 50MB.
+Fri Jun 30 23:13:00 2023: touched 60MB.
+Fri Jun 30 23:13:01 2023: touched 70MB.
+Fri Jun 30 23:13:02 2023: touched 80MB.
+Fri Jun 30 23:13:03 2023: touched 90MB.
+Fri Jun 30 23:13:04 2023: touched 100MB, please press Enter key
+
+- Result of "sar -r 1"
+    => Small change can be affected from the other processes.
+23:12:50    kbmemfree   kbavail kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact   kbdirty
+23:12:51      5473292   5507484    258388      4.29     32376    199880    373492      4.60     93660    182304         0
+23:12:52*     5473040   5507232    258640      4.29     32376    199880    373876      4.60     93664    182316         0   (Before allocation)
+23:12:53*     5473040   5507232    258636      4.29     32376    199880    476280      5.86     93668    182540         0   (After allocation - No increase in memused.(virtual memory updated))
+23:12:54      5473040   5507232    258636      4.29     32376    199880    476280      5.86     93668    182540         0
+23:12:55*     5459240   5493432    272436      4.52     32376    199880    476280      5.86     93668    194340         0   (10 MiB touched - Memused starts to increase.(Physical memory updated))
+23:12:56*     5451048   5485240    280628      4.65     32376    199880    476280      5.86     93668    204580         0   (20 MiB touched)
+23:12:57*     5438760   5472952    292916      4.86     32376    199880    476280      5.86     93668    214820         0   (30 MiB touched)
+23:12:58*     5430568   5464760    301108      4.99     32376    199880    476280      5.86     93668    225060         0   (40 MiB touched)
+23:12:59*     5418280   5452472    313396      5.20     32376    199880    476280      5.86     93668    235300         0   (50 MiB touched)
+23:13:00*     5410088   5444280    321588      5.33     32376    199880    476280      5.86     93668    245540         0   (60 MiB touched)
+23:13:01*     5397800   5431992    333876      5.54     32376    199880    476280      5.86     93668    255780         0   (70 MiB touched)
+23:13:02*     5389608   5423800    342068      5.67     32376    199880    476280      5.86     93668    266020         0   (80 MiB touched)
+23:13:03*     5377320   5411512    354356      5.88     32376    199880    476280      5.86     93668    276272         0   (90 MiB touched)
+23:13:04*     5368624   5402816    363052      6.02     32376    199880    476280      5.86     93668    284944         0   (100 MiB touched)
+
+2. Fault number comparison.
+- Result of "demand-paging"
+Fri Jun 30 23:26:37 2023: before allocation, please press Enter key
+Fri Jun 30 23:26:38 2023: allocated 100MB, please press Enter key
+Fri Jun 30 23:26:39 2023: touched 10MB.
+Fri Jun 30 23:26:40 2023: touched 20MB.
+Fri Jun 30 23:26:41 2023: touched 30MB.
+Fri Jun 30 23:26:42 2023: touched 40MB.
+Fri Jun 30 23:26:43 2023: touched 50MB.
+Fri Jun 30 23:26:44 2023: touched 60MB.
+Fri Jun 30 23:26:45 2023: touched 70MB.
+Fri Jun 30 23:26:46 2023: touched 80MB.
+Fri Jun 30 23:26:47 2023: touched 90MB.
+Fri Jun 30 23:26:48 2023: touched 100MB, please press Enter key
+
+
+- Result of "sar -B 1"
+Linux 5.15.90.1-microsoft-standard-WSL2 (DESKTOP-O1CLCTF)       06/30/23        _x86_64_        (8 CPU)
+
+    23:26:36            pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff
+    23:26:37*           0.00      0.00      0.00*     0.00     30.00      0.00      0.00      0.00      0.00
+    23:26:38*(virtual)  0.00      0.00    114.00*     0.00     48.00      0.00      0.00      0.00      0.00
+    23:26:39*           0.00      0.00      1.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:40*(physical) 0.00      0.00    515.00*     0.00      2.00      0.00      0.00      0.00      0.00
+    23:26:41*           0.00      0.00      5.00*     0.00      2.00      0.00      0.00      0.00      0.00
+    23:26:42*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:43*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:44*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:45*           0.00     36.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:46*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:47*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:48*           0.00      0.00      5.00*     0.00      1.00      0.00      0.00      0.00      0.00
+    23:26:49            0.00      0.00      5.00      0.00      2.00      0.00      0.00      0.00      0.00
+    ^C
+    Average:         0.00      2.77     51.92      0.00      7.08      0.00      0.00      0.00      0.00
+   
+3. 
+- Result of "demand-paging"
+Fri Jun 30 23:33:38 2023: before allocation, please press Enter key
+Fri Jun 30 23:33:47 2023: allocated 100MB, please press Enter key
+Fri Jun 30 23:33:49 2023: touched 10MB.
+Fri Jun 30 23:33:50 2023: touched 20MB.
+Fri Jun 30 23:33:51 2023: touched 30MB.
+Fri Jun 30 23:33:52 2023: touched 40MB.
+Fri Jun 30 23:33:53 2023: touched 50MB.
+Fri Jun 30 23:33:54 2023: touched 60MB.
+Fri Jun 30 23:33:55 2023: touched 70MB.
+Fri Jun 30 23:33:56 2023: touched 80MB.
+Fri Jun 30 23:33:57 2023: touched 90MB.
+Fri Jun 30 23:33:58 2023: touched 100MB, please press Enter key
+
+- Result of vsz-rss.sh  (vsz : virtual size / rss : resource secured)
+Date                        pid     comm            vsz     rss maj_flt min_flt
+Fri Jun 30 23:33:46 KST 2023:   348 demand-paging     2772  1056      0     88  
+Fri Jun 30 23:33:47 KST 2023:   348 demand-paging     2772  1056      0     88  *
+Fri Jun 30 23:33:48 KST 2023:   348 demand-paging   105176  1056      0     89      - vsz increase from malloc
+Fri Jun 30 23:33:49 KST 2023:   348 demand-paging   105176 12720      0    285  *   - rss increase form touch
+Fri Jun 30 23:33:50 KST 2023:   348 demand-paging   105176 22960      0    290  *       (min_flt increases too)
+Fri Jun 30 23:33:51 KST 2023:   348 demand-paging   105176 33200      0    295  *       (No increase in vsz)
+Fri Jun 30 23:33:52 KST 2023:   348 demand-paging   105176 43440      0    300  *
+Fri Jun 30 23:33:53 KST 2023:   348 demand-paging   105176 53680      0    305  *
+Fri Jun 30 23:33:54 KST 2023:   348 demand-paging   105176 63920      0    310  *
+Fri Jun 30 23:33:55 KST 2023:   348 demand-paging   105176 74160      0    315  *
+Fri Jun 30 23:33:56 KST 2023:   348 demand-paging   105176 84400      0    320  *
+Fri Jun 30 23:33:57 KST 2023:   348 demand-paging   105176 94640      0    325  *
+Fri Jun 30 23:33:58 KST 2023:   348 demand-paging   105176 103956     0    649  *
+Fri Jun 30 23:33:59 KST 2023:   348 demand-paging   105176 103956     0    649
+Fri Jun 30 23:34:00 KST 2023: target process seems to be finished
+
+
