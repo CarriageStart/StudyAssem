@@ -136,4 +136,9 @@ ex2) swapon
 NAME     TYPE      SIZE USED PRIO
 /dev/sdb partition   2G   0B   -2
 
+8. dd
+dd if=/dev/null of=file_name oflag=direct bs=1M count=1K
+
+
+
 

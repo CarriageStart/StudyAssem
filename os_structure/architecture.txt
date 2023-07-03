@@ -9,3 +9,9 @@ cache size          : 32K
 type                : Data  ( Only for data => Code, Unified)
 
 
+2. /dev/zero (or /dev/null)
+- It makes an endless stream of null characters 0x00, which behaves
+ like a blank file with infinite size.
+
+ex) pipeline 1024 characters to file 
+dd if=/dev/zero of=out_file count=1024 bs=1024
