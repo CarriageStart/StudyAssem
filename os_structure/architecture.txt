@@ -15,3 +15,211 @@ type                : Data  ( Only for data => Code, Unified)
 
 ex) pipeline 1024 characters to file 
 dd if=/dev/zero of=out_file count=1024 bs=1024
+
+3. ls -l /dev/
+
+total 0
+|=> c : character device, b : block device, d : directory, l : Symbolic Link
+crw-r--r-- 1 root root  10, 235 Jul  4 15:37 autofs
+drwxr-xr-x 2 root root       40 Jul  4 15:37 block
+drwxr-xr-x 2 root root      100 Jul  4 15:37 bsg
+crw------- 1 root root  10, 234 Jul  4 15:37 btrfs-control
+drwxr-xr-x 3 root root       60 Jul  4 15:37 bus                        *
+crw------- 1 root root   5,   1 Jul  4 15:37 console                    *
+crw------- 1 root root  10, 125 Jul  4 15:37 cpu_dma_latency
+crw------- 1 root root  10, 203 Jul  4 15:37 cuse
+drwxr-xr-x 2 root root       80 Jul  4 15:37 dri
+crw-rw-rw- 1 root root  10, 127 Jul  4 15:37 dxg
+lrwxrwxrwx 1 root root       13 Jul  4 15:37 fd -> /proc/self/fd        *
+crw-rw-rw- 1 root root   1,   7 Jul  4 15:37 full
+crw-rw-rw- 1 root root  10, 229 Jul  4 15:37 fuse
+crw------- 1 root root 229,   0 Jul  4 15:37 hvc0
+crw--w---- 1 root tty  229,   1 Jul  4 15:37 hvc1
+crw------- 1 root root 229,   2 Jul  4 15:37 hvc2
+crw------- 1 root root 229,   3 Jul  4 15:37 hvc3
+crw------- 1 root root 229,   4 Jul  4 15:37 hvc4
+crw------- 1 root root 229,   5 Jul  4 15:37 hvc5
+crw------- 1 root root 229,   6 Jul  4 15:37 hvc6
+crw------- 1 root root 229,   7 Jul  4 15:37 hvc7
+crw-r--r-- 1 root root   1,  11 Jul  4 15:37 kmsg
+crw------- 1 root root  10, 237 Jul  4 15:37 loop-control
+brw------- 1 root root   7,   0 Jul  4 15:37 loop0
+brw------- 1 root root   7,   1 Jul  4 15:37 loop1
+brw------- 1 root root   7,   2 Jul  4 15:37 loop2
+brw------- 1 root root   7,   3 Jul  4 15:37 loop3
+brw------- 1 root root   7,   4 Jul  4 15:37 loop4
+brw------- 1 root root   7,   5 Jul  4 15:37 loop5
+brw------- 1 root root   7,   6 Jul  4 15:37 loop6
+brw------- 1 root root   7,   7 Jul  4 15:37 loop7
+drwxr-xr-x 2 root root       60 Jul  4 15:37 mapper
+crw------- 1 root root   1,   1 Jul  4 15:37 mem
+drwxr-xr-x 2 root root       60 Jul  4 15:37 net
+crw-rw-rw- 1 root root   1,   3 Jul  4 15:37 null
+crw------- 1 root root  10, 144 Jul  4 15:37 nvram
+crw------- 1 root root 108,   0 Jul  4 15:37 ppp
+crw-rw-rw- 1 root root   5,   2 Jul  4 16:26 ptmx
+crw------- 1 root root 249,   0 Jul  4 15:37 ptp0
+drwxr-xr-x 2 root root        0 Jul  4 15:37 pts                        * Process Terminals
+brw------- 1 root root   1,   0 Jul  4 15:37 ram0                       *
+brw------- 1 root root   1,   1 Jul  4 15:37 ram1                       *
+brw------- 1 root root   1,  10 Jul  4 15:37 ram10                      *
+brw------- 1 root root   1,  11 Jul  4 15:37 ram11                      *
+brw------- 1 root root   1,  12 Jul  4 15:37 ram12                      *
+brw------- 1 root root   1,  13 Jul  4 15:37 ram13                      *
+brw------- 1 root root   1,  14 Jul  4 15:37 ram14                      *
+brw------- 1 root root   1,  15 Jul  4 15:37 ram15                      *
+brw------- 1 root root   1,   2 Jul  4 15:37 ram2                       *
+brw------- 1 root root   1,   3 Jul  4 15:37 ram3                       *
+brw------- 1 root root   1,   4 Jul  4 15:37 ram4                       *
+brw------- 1 root root   1,   5 Jul  4 15:37 ram5                       *
+brw------- 1 root root   1,   6 Jul  4 15:37 ram6                       *
+brw------- 1 root root   1,   7 Jul  4 15:37 ram7                       *
+brw------- 1 root root   1,   8 Jul  4 15:37 ram8                       *
+brw------- 1 root root   1,   9 Jul  4 15:37 ram9                       *
+crw-rw-rw- 1 root root   1,   8 Jul  4 15:37 random
+crw------- 1 root root 251,   0 Jul  4 15:37 rtc0
+brw------- 1 root root   8,   0 Jul  4 15:37 sda
+brw------- 1 root root   8,  16 Jul  4 15:37 sdb
+brw------- 1 root root   8,  32 Jul  4 15:37 sdc
+crw------- 1 root root  21,   0 Jul  4 15:37 sg0
+crw------- 1 root root  21,   1 Jul  4 15:37 sg1
+crw------- 1 root root  21,   2 Jul  4 15:37 sg2
+drwxrwxrwt 2 root root       40 Jul  4 15:37 shm
+lrwxrwxrwx 1 root root       15 Jul  4 15:37 stderr -> /proc/self/fd/2  * Rediretion to file desctiptor
+lrwxrwxrwx 1 root root       15 Jul  4 15:37 stdin -> /proc/self/fd/0   *
+lrwxrwxrwx 1 root root       15 Jul  4 15:37 stdout -> /proc/self/fd/1  *
+crw-rw-rw- 1 root root   5,   0 Jul  4 15:37 tty
+crw------- 1 root root   4,   0 Jul  4 15:37 tty0
+crw------- 1 root root   4,   1 Jul  4 15:37 tty1
+                        ...
+crw------- 1 root root   4,  63 Jul  4 15:37 tty63
+crw-rw-rw- 1 root root   1,   9 Jul  4 15:37 urandom
+crw------- 1 root root   7,   0 Jul  4 15:37 vcs
+crw------- 1 root root   7,   1 Jul  4 15:37 vcs1
+crw------- 1 root root   7, 128 Jul  4 15:37 vcsa
+crw------- 1 root root   7, 129 Jul  4 15:37 vcsa1
+crw------- 1 root root   7,  64 Jul  4 15:37 vcsu
+crw------- 1 root root   7,  65 Jul  4 15:37 vcsu1
+drwxr-xr-x 2 root root       60 Jul  4 15:37 vfio
+crw------- 1 root root  10, 238 Jul  4 15:37 vhost-net
+crw------- 1 root root 247,   0 Jul  4 15:37 vport0p0
+crw------- 1 root root 247,   1 Jul  4 15:37 vport0p1
+crw------- 1 root root  10, 126 Jul  4 15:37 vsock
+crw-rw-rw- 1 root root   1,   5 Jul  4 15:37 zero
+
+    => Note that network driver is not listed.
+
+4. Process Terminals
+- It is listed as device in filesystem on Ram as "/dev/pts"
+
+ex) tmux 2 screens.
+ps ax | grep bash
+   10 pts/0    Ss     0:00 -bash    * Main terminal
+   71 pts/1    Ss+    0:00 -bash    * Tmux screen 1
+   83 pts/2    Ss     0:00 -bash    * Tmux screen 2
+        ^= Process Terminal it uses.
+
+In terminal pts/1, run
+"executable > /dev/pts/2"
+
+The result is shown in the /dev/pts/2 terminal.
+
+    => "echo" or "fprintf" in excutable sends "write() syscall" to the
+       corresponding device file.
+    => "write() syscall" behaves differently depending on the file type,
+       mostly whether data file(-rw...) or device file(crw... or brw...).
+    => If it is a device file, then it reference the device description.
+
+
+
+5. stdout, stdin, stderr
+- The result of "ls -l /proc/1/fd"
+total 0
+lrwx------ 1 root root 64 Jul  4 16:42 0 -> /dev/null           *stdout 
+lrwx------ 1 root root 64 Jul  4 16:42 1 -> /dev/null           *stdin
+lrwx------ 1 root root 64 Jul  4 16:42 100 -> socket:[18320]
+l-wx------ 1 root root 64 Jul  4 16:42 2 -> /dev/kmsg           *stderr
+lr-x------ 1 root root 64 Jul  4 16:42 3 -> mnt:[4026532275]
+lrwx------ 1 root root 64 Jul  4 16:42 4 -> socket:[19492]
+lrwx------ 1 root root 64 Jul  4 16:42 6 -> socket:[19497]
+lrwx------ 1 root root 64 Jul  4 16:42 7 -> socket:[19498]
+
+    => When process is executed, stdout, stdin, stderr are set to /dev/pts/0
+    => Note that the network driver is listed as file descriptor.
+
+    * File system is API operates with following syscalls.
+        open(), close(), read(), write(), creat(), unlink(), ioctl()
+6. Other file system.
+- tmpfs : temperal uses like /run.
+ex) mount | grep ^tmpfs
+tmpfs on /sys/fs/cgroup type tmpfs (rw,nosuid,nodev,noexec,relatime,mode=755)
+
+- nfs : Network file system that access the file in the remote host.("cifs" for Windows)
+
+- Virtual File systems
+    a.  procfs : Process file system for meta-data oif processes.
+    ex) ls /proc/$$
+    => Current process information(Bash)
+    total 0
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 arch_status
+    dr-xr-xr-x  2 kihoon kihoon 0 Jul  4 17:10 attr
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 auxv
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 cgroup
+    --w-------  1 kihoon kihoon 0 Jul  4 17:10 clear_refs
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 cmdline          * Process command line parameters
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 comm
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 coredump_filter
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 cpuset
+    lrwxrwxrwx  1 kihoon kihoon 0 Jul  4 17:10 cwd -> /home/kihoon/StudyAssem/os_structure  * current dir
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 environ
+    lrwxrwxrwx  1 kihoon kihoon 0 Jul  4 17:10 exe -> /usr/bin/bash
+    dr-x------  2 kihoon kihoon 0 Jul  4 17:10 fd               * File descriptors the process uses.
+    dr-xr-xr-x  2 kihoon kihoon 0 Jul  4 17:10 fdinfo
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 gid_map
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 io
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 limits
+    dr-x------  2 kihoon kihoon 0 Jul  4 17:10 map_files
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 maps             * Process memory map
+    -rw-------  1 kihoon kihoon 0 Jul  4 17:10 mem
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 mountinfo
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 mounts
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 mountstats
+    dr-xr-xr-x 66 kihoon kihoon 0 Jul  4 17:10 net
+    dr-x--x--x  2 kihoon kihoon 0 Jul  4 17:10 ns
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 oom_adj
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 oom_score
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 oom_score_adj
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 pagemap
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 personality
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 projid_map
+    lrwxrwxrwx  1 kihoon kihoon 0 Jul  4 17:10 root -> /
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 sched
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 schedstat
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 setgroups
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 smaps
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 smaps_rollup
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 stack
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 stat             * Process Status
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 statm
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 status
+    -r--------  1 kihoon kihoon 0 Jul  4 17:10 syscall
+    dr-xr-xr-x  3 kihoon kihoon 0 Jul  4 17:10 task
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 timens_offsets
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 timers
+    -rw-rw-rw-  1 kihoon kihoon 0 Jul  4 17:10 timerslack_ns
+    -rw-r--r--  1 kihoon kihoon 0 Jul  4 17:10 uid_map
+    -r--r--r--  1 kihoon kihoon 0 Jul  4 17:10 wchan
+
+    => CHeck with "man proc"
+
+
+    b. sysfs : System resource file system. (/sys/...)
+        - /sys/devices  : Device info of system.
+        - /sys/fs       : All file systems information.
+        
+    c. cgroupfs : Resource restriction file system(/sys/fs/cgroup)
+
+
+
+
+
